@@ -25,7 +25,7 @@ options{
 	language = Python3;
 }
 
-// ! -------------------------- Lexical structure ----------------------- 
+// ! -------------------------- Lexical structure ----------------------- ;
 
 // TODO KeyWord
 IF          : 'if' ;
@@ -87,15 +87,19 @@ SEMI       : ';' ;
 ID: [a-zA-Z_][a-zA-Z0-9_]*;
 
 // TODO Literal 
-DECIMAL_LIT: '0' | [1-9][0-9]*;
-BINARY_LIT: ('0b' [01]+) | ('0B' [01]+);
-OCTAL_LIT: ('0o' [0-7]+) | ('0O' [0-7]+);
-HEXADECIMAL_LIT: ('0x' [0-9a-fA-F]+) | ('0X' [0-9a-fA-F]+);
+DECIMAL_LIT: ('0' | [1-9] [0-9]*) ;
+BINARY_LIT: '0' [bB] BIN_DIGIT+ { self.text = str(int(self.text, 2)) };
+OCT_LIT: '0' [oO] OCTAL_DIGIT+ { self.text = str(int(self.text, 8)) };
+HEXA_LIT: '0' [xX] HEX_DIGIT+ { self.text = str(int(self.text, 16)) };
+fragment HEX_DIGIT: [0-9a-fA-F];
+fragment OCTAL_DIGIT: [0-7];
+fragment BIN_DIGIT: [01];
 
-fragment EXP: [eE] [+-]? [0-9]+;
-FLOAT_LIT: [0-9]+ '.' [0-9]* EXP? | '.' [0-9]+ EXP? | [0-9]+ EXP;
+fragment EXP: [eE] [+-]? ('0' | [1-9] [0-9]*);
+FLOAT_LIT: DECIMALS '.' [0-9]* EXP? | '.' [0-9]+ EXP? | [0-9]+ EXP;
+fragment DECIMALS: ('0' | [1-9] [0-9]*) ;
 
-STRING_LIT: '"' (~["\\] | '\\' ["ntr"\\])* '"';
+STRING_LIT: '"' (~["\\\n] | '\\' [ntr"\\] | '\'"')* '"' {self.text = self.text[1:-1]};
 BOOLEAN_LIT: 'true' | 'false';
 NIL_LIT: 'nil';
 
@@ -106,23 +110,24 @@ WS: [ \t\r\n\f]+ -> skip;
 
 // TODO ERROR
 ERROR_CHAR: . {raise ErrorToken(self.text)};
-UNCLOSE_STRING: '"' (~["\\] | '\\' ["ntr"\\])* (EOF | '\n')
+UNCLOSE_STRING: '"' (~[\n\\"] | '\\' [ntr"\\] | '\'"')* (EOF | '\n') 
 {
     if(len(self.text) >= 2 and self.text[-1] == '\n' and self.text[-2] == '\r'):
-        raise UncloseString(self.text[1:-2])
+        raise UncloseString(self.text[1:-2]) 
     elif (self.text[-1] == '\n'):
-        raise UncloseString(self.text[1:-1])
+        raise UncloseString(self.text[1:-1]) 
     else:
         raise UncloseString(self.text[1:])
 };
 
-fragment VALID_ESCAPES: 'n' | 't' | 'r' | '"' | '\\';
 
-IllegalEscapeInString: '"' (~["\\] | '\\' ~[VALID_ESCAPES])*
+VALID_ESCAPES: 'n' | 't' | 'r' | '"' | '\\';
+ILLEGAL_ESCAPE: '"' (~["\\\n] | '\\' [ntr"\\] | '\'"')* '\\' ~[rnt'\\]
 {
+    VAL_ESCAPES = ['n', 't', 'r', '"', '\\']
     for i in range(1, len(self.text)-1):
-        if self.text[i] == '\\' and self.text[i+1] not in VALID_ESCAPES:
-            raise IllegalEscapeInString(self.text[1:i+2])
+        if self.text[i] == '\\' and self.text[i+1] not in VAL_ESCAPES:
+            raise IllegalEscape(self.text[1:i+2])
 };
 //!  -------------------------- end Lexical structure ------------------- //
 

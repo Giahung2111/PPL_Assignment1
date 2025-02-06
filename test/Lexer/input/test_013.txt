@@ -1,1 +1,1 @@
- "VOTIEN\f" 
+x && y || z

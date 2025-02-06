@@ -11,19 +11,19 @@ else:
 
 def serializedATN():
     with StringIO() as buf:
-        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3J")
+        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3K")
         buf.write("/\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\3\2")
         buf.write("\6\2\20\n\2\r\2\16\2\21\3\2\3\2\3\3\3\3\5\3\30\n\3\3\4")
         buf.write("\3\4\3\4\3\4\3\4\3\4\3\5\3\5\3\5\3\5\3\5\3\5\3\6\3\6\3")
         buf.write("\6\3\6\3\6\5\6+\n\6\3\7\3\7\3\7\2\2\b\2\4\6\b\n\f\2\3")
-        buf.write("\4\2\65\65JJ\2+\2\17\3\2\2\2\4\27\3\2\2\2\6\31\3\2\2\2")
+        buf.write("\4\2\65\65KK\2+\2\17\3\2\2\2\4\27\3\2\2\2\6\31\3\2\2\2")
         buf.write("\b\37\3\2\2\2\n*\3\2\2\2\f,\3\2\2\2\16\20\5\4\3\2\17\16")
         buf.write("\3\2\2\2\20\21\3\2\2\2\21\17\3\2\2\2\21\22\3\2\2\2\22")
         buf.write("\23\3\2\2\2\23\24\7\2\2\3\24\3\3\2\2\2\25\30\5\6\4\2\26")
         buf.write("\30\5\b\5\2\27\25\3\2\2\2\27\26\3\2\2\2\30\5\3\2\2\2\31")
-        buf.write("\32\7\f\2\2\32\33\7\65\2\2\33\34\7D\2\2\34\35\5\n\6\2")
-        buf.write("\35\36\7E\2\2\36\7\3\2\2\2\37 \7F\2\2 !\7G\2\2!\"\5\n")
-        buf.write("\6\2\"#\7H\2\2#$\7E\2\2$\t\3\2\2\2%&\5\f\7\2&\'\7I\2\2")
+        buf.write("\32\7\f\2\2\32\33\7\65\2\2\33\34\7E\2\2\34\35\5\n\6\2")
+        buf.write("\35\36\7F\2\2\36\7\3\2\2\2\37 \7G\2\2 !\7H\2\2!\"\5\n")
+        buf.write("\6\2\"#\7I\2\2#$\7F\2\2$\t\3\2\2\2%&\5\f\7\2&\'\7J\2\2")
         buf.write("\'(\5\n\6\2(+\3\2\2\2)+\5\f\7\2*%\3\2\2\2*)\3\2\2\2+\13")
         buf.write("\3\2\2\2,-\t\2\2\2-\r\3\2\2\2\5\21\27*")
         return buf.getvalue()
@@ -58,11 +58,11 @@ class MiniGoParser ( Parser ):
                       "DIVEQ", "MODEQ", "COLONEQ", "ASSIGN", "DOT", "LPAREN", 
                       "RPAREN", "LBRACE", "RBRACE", "LBRACK", "RBRACK", 
                       "COMMA", "SEMI", "ID", "DECIMAL_LIT", "BINARY_LIT", 
-                      "OCTAL_LIT", "HEXADECIMAL_LIT", "FLOAT_LIT", "STRING_LIT", 
+                      "OCT_LIT", "HEXA_LIT", "FLOAT_LIT", "STRING_LIT", 
                       "BOOLEAN_LIT", "NIL_LIT", "SINGLE_LINE_COMMENT", "MULTI_LINE_COMMENT", 
-                      "WS", "ERROR_CHAR", "UNCLOSE_STRING", "IllegalEscapeInString", 
-                      "ASSIGNI", "COMCOMMA", "PRINT", "LP", "RP", "ADD", 
-                      "INT_LIT" ]
+                      "WS", "ERROR_CHAR", "UNCLOSE_STRING", "VALID_ESCAPES", 
+                      "ILLEGAL_ESCAPE", "ASSIGNI", "COMCOMMA", "PRINT", 
+                      "LP", "RP", "ADD", "INT_LIT" ]
 
     RULE_program = 0
     RULE_statement = 1
@@ -128,8 +128,8 @@ class MiniGoParser ( Parser ):
     ID=51
     DECIMAL_LIT=52
     BINARY_LIT=53
-    OCTAL_LIT=54
-    HEXADECIMAL_LIT=55
+    OCT_LIT=54
+    HEXA_LIT=55
     FLOAT_LIT=56
     STRING_LIT=57
     BOOLEAN_LIT=58
@@ -139,14 +139,15 @@ class MiniGoParser ( Parser ):
     WS=62
     ERROR_CHAR=63
     UNCLOSE_STRING=64
-    IllegalEscapeInString=65
-    ASSIGNI=66
-    COMCOMMA=67
-    PRINT=68
-    LP=69
-    RP=70
-    ADD=71
-    INT_LIT=72
+    VALID_ESCAPES=65
+    ILLEGAL_ESCAPE=66
+    ASSIGNI=67
+    COMCOMMA=68
+    PRINT=69
+    LP=70
+    RP=71
+    ADD=72
+    INT_LIT=73
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)

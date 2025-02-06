@@ -1,1 +1,1 @@
-ErrorToken ^
+w,/=,4,;,<EOF>
