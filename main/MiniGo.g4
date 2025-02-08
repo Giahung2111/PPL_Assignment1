@@ -129,12 +129,20 @@ ILLEGAL_ESCAPE: '"' (~["\\\n] | '\\' [ntr"\\] | '\'"')* '\\' ~[rnt'\\]
         if self.text[i] == '\\' and self.text[i+1] not in VAL_ESCAPES:
             raise IllegalEscape(self.text[1:i+2])
 };
+
 //!  -------------------------- end Lexical structure ------------------- //
 
-// //! --------------------------  parser structure ----------------------- //
+//! --------------------------  parser structure ----------------------- //
+
 
 // declared
-program: statement+ EOF;
+program: statement + EOF;
+
+// Literal
+array_lit: '[' DECIMAL_LIT ']' typ_array '{' list_expression '}';
+typ_array: 'int' | 'float' | 'boolean' | 'string' | 'struct';
+list_expression: list_expr | ;
+list_expr: expression COMMA list_expr | expression;
 
 //  Statements
 statement: (declaration_statement | call_statement);
@@ -145,4 +153,4 @@ call_statement: PRINT LP expression RP COMCOMMA;
 expression: expression1 ADD expression | expression1;
 expression1: ID | INT_LIT;
 
-// //! -------------------------- end  parser structure ----------------------- //
+// //! -------------------------- end  parser structure -----------------------
