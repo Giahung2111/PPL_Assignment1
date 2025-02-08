@@ -136,7 +136,7 @@ ILLEGAL_ESCAPE: '"' (~["\\\n] | '\\' [ntr"\\] | '\'"')* '\\' ~[rnt'\\]
 
 
 // declared
-program: statement + EOF;
+program: EOF;
 
 // Literal
 array_lit: '[' DECIMAL_LIT ']' typ_array '{' list_expression '}';
@@ -144,13 +144,25 @@ typ_array: 'int' | 'float' | 'boolean' | 'string' | 'struct';
 list_expression: list_expr | ;
 list_expr: expression COMMA list_expr | expression;
 
+struct_lit: ID '{' list_elements '}';
+list_elements: list_elem | ;
+list_elem: element COMMA list_elem | element;
+element: ID ':' expression;
+
 //  Statements
-statement: (declaration_statement | call_statement);
-declaration_statement: INT ID ASSIGNI expression COMCOMMA;
-call_statement: PRINT LP expression RP COMCOMMA;
+// statement: (declaration_statement | call_statement);
+// declaration_statement: INT ID ASSIGNI expression COMCOMMA;
+// call_statement: PRINT LP expression RP COMCOMMA;
 
 // Expression
-expression: expression1 ADD expression | expression1;
-expression1: ID | INT_LIT;
+expression: expression OR expression1 | expression1;
+expression1: expression1 AND expression2 | expression2;
+expression2: expression2 (EQUAL | NOTEQUAL | LT | LE | GT | GE) expression3 | expression3;
+expression3: expression3 (PLUS | MINUS ) expression4 | expression4;
+expression4: expression4 (MUL | DIV | MOD) expression5 | expression5;
+expression5: expression6 (NOT | MINUS) expression5 | expression6;
+expression6: expression6 (LBRACE | RBRACE | DOT) expression7 | expression7;
+expression7: DECIMAL_LIT | FLOAT_LIT | STRING_LIT | BOOLEAN_LIT | NIL_LIT;
+
 
 // //! -------------------------- end  parser structure -----------------------
