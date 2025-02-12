@@ -1,3 +1,6 @@
-    
-            var z VOTIEN = a[2][3][a + 2];                         
-        
+
+                                    func Add() {
+                                        for var i [2]int = 0; foo().a.b(); i[3] := 1 {
+                                            return; 
+                                        }
+                                    };

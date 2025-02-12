@@ -48,6 +48,8 @@ RANGE       : 'range' ;
 NIL         : 'nil' ;
 TRUE        : 'true' ;
 FALSE       : 'false' ;
+PUTSTRINGLN : 'PutStringLn';
+PUTINTLN    : 'PutIntLn';
 
 // TODO Operators
 PLUS       : '+' ;
@@ -136,23 +138,28 @@ ILLEGAL_ESCAPE: '"' (~["\\\n] | '\\' [ntr"\\] | '\'"')* '\\' ~[rnt'\\]
 
 
 // declared
-program: EOF;
+program: statement EOF;
+
 
 // Literal
-array_lit: '[' DECIMAL_LIT ']' typ_array '{' list_expression '}';
-typ_array: 'int' | 'float' | 'boolean' | 'string' | 'struct';
+literal: array_lit | struct_lit | DECIMAL_LIT | FLOAT_LIT | STRING_LIT | bool_lit | NIL_LIT;
+bool_lit: TRUE | FALSE;
+array_lit: LBRACK DECIMAL_LIT RBRACK typ LBRACE list_expression RBRACE;
+ARRAY: 'array';
+typ: INT | FLOAT | BOOLEAN | STRING | STRUCT | ARRAY;
 list_expression: list_expr | ;
 list_expr: expression COMMA list_expr | expression;
 
-struct_lit: ID '{' list_elements '}';
+struct_lit: ID LBRACE list_elements RBRACE;
 list_elements: list_elem | ;
 list_elem: element COMMA list_elem | element;
 element: ID ':' expression;
 
 //  Statements
-// statement: (declaration_statement | call_statement);
-// declaration_statement: INT ID ASSIGNI expression COMCOMMA;
-// call_statement: PRINT LP expression RP COMCOMMA;
+statements_list: ;
+statement: (declaration_statement | call_statement);
+declaration_statement: variables | constants ;
+call_statement: ID LPAREN expression RPAREN SEMI;
 
 // Expression
 expression: expression OR expression1 | expression1;
@@ -162,7 +169,46 @@ expression3: expression3 (PLUS | MINUS ) expression4 | expression4;
 expression4: expression4 (MUL | DIV | MOD) expression5 | expression5;
 expression5: expression6 (NOT | MINUS) expression5 | expression6;
 expression6: expression6 (LBRACE | RBRACE | DOT) expression7 | expression7;
-expression7: DECIMAL_LIT | FLOAT_LIT | STRING_LIT | BOOLEAN_LIT | NIL_LIT;
+expression7: ID | literal | function_call | LPAREN expression RPAREN;
+
+
+
+// Function Call
+function_call: ID LPAREN list_expression RPAREN;
+
+// Method Call
+method_call: ID DOT function_call;
+
+// DECLARED
+// 5.1 Variables
+variables: VAR ID (typ ASSIGN expression | ASSIGN  expression  | typ) SEMI;
+// 5.2 Constants
+constants: CONST ID ASSIGN expression SEMI;
+// 5.3 Functions and Methods
+functions: FUNC ID LPAREN paramaters_list RPAREN typ LBRACE statements_list RBRACE;
+paramaters_list: paramaters | ;
+paramaters: paramater COMMA paramaters | paramater;
+paramater: ID typ;
+
+methods: FUNC LPAREN ID ID RPAREN ID LPAREN paramaters_list RPAREN typ LBRACE statements_list RBRACE;
+
+// // 5.4 Struct
+struct: TYPE ID STRUCT LBRACE fieldname_list RBRACE;
+fieldname_list: fieldname fieldname_list | fieldname;
+fieldname: ID typ SEMI ;
+
+struct_instance: ID COLONEQ ID LBRACE valueinstance_list RBRACE;
+valueinstance_list: valueinstance_prime | ;
+valueinstance_prime: valueinstance COMMA valueinstance_prime | valueinstance;
+valueinstance: ID ':' expression;
+
+// Accessing the fields of a struct
+print_line: PUTINTLN | PUTSTRINGLN;
+accessing_fields: print_line LPAREN expression  RPAREN;
+
+// Modify the fields of a truct
+modify_fields: expression COLONEQ expression;
+
 
 
 // //! -------------------------- end  parser structure -----------------------

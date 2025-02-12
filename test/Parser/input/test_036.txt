@@ -1,4 +1,2 @@
 
-                                    func Add() {
-                                        a.c[2].e[3].k += 2;       
-                                    }
+            const a = [2]int{1, 2, 3}; 
