@@ -36,6 +36,7 @@ FUNC        : 'func' ;
 TYPE        : 'type' ;
 STRUCT      : 'struct' ;
 INTERFACE   : 'interface' ;
+STR         : 'str';
 STRING      : 'string' ;
 INT         : 'int' ;
 FLOAT       : 'float' ;
@@ -50,6 +51,7 @@ TRUE        : 'true' ;
 FALSE       : 'false' ;
 PUTSTRINGLN : 'PutStringLn';
 PUTINTLN    : 'PutIntLn';
+ARRAY: 'array';
 
 // TODO Operators
 PLUS       : '+' ;
@@ -90,7 +92,7 @@ SEMI       : ';' ;
 ID: [a-zA-Z_][a-zA-Z0-9_]*;
 
 // TODO Literal 
-DECIMAL_LIT: ('0' | [1-9] [0-9]*) ;
+DECIMAL_LIT: (MINUS | ) ('0' | [1-9] [0-9]*) ;
 BINARY_LIT: '0' [bB] BIN_DIGIT+ { self.text = str(int(self.text, 2)) };
 OCT_LIT: '0' [oO] OCTAL_DIGIT+ { self.text = str(int(self.text, 8)) };
 HEXA_LIT: '0' [xX] HEX_DIGIT+ { self.text = str(int(self.text, 16)) };
@@ -145,19 +147,21 @@ program: statements_list EOF;
 // Literal
 literal: array_lit | struct_lit | DECIMAL_LIT | FLOAT_LIT | STRING_LIT | bool_lit | NIL_LIT;
 bool_lit: TRUE | FALSE;
-array_lit: LBRACK DECIMAL_LIT RBRACK typ LBRACE list_expression RBRACE;
-ARRAY: 'array';
-typ: INT | FLOAT | BOOLEAN | STRING | STRUCT | ARRAY;
+array_lit: dimension_dec_list typ LBRACE list_expression RBRACE;
+dimension_dec_list: dimension_dec dimension_dec_list | dimension_dec;
+dimension_dec: LBRACK DECIMAL_LIT RBRACK;
+
+typ: INT | FLOAT | BOOLEAN | STRING | STR | STRUCT | ARRAY;
 list_expression: list_expr | ;
 list_expr: expression COMMA list_expr | expression;
-access_array_elm: expression LBRACK expression RBRACK;
+access_array_elm: ID LBRACK DECIMAL_LIT RBRACK;
 
 struct_lit: ID LBRACE list_elements RBRACE;
 list_elements: list_elem | ;
 list_elem: element COMMA list_elem | element;
 element: ID ':' expression;
 
-//  Statements
+// // //  Statements
 statements_list: statement statements_list | statement;
 statement: declaration_statement | call_statement | assignment_statement | if_statement | for_statement | break_statement | continue_statement | return_statement;
 //---
@@ -190,8 +194,8 @@ expression2: expression2 (EQUAL | NOTEQUAL | LT | LE | GT | GE) expression3 | ex
 expression3: expression3 (PLUS | MINUS ) expression4 | expression4;
 expression4: expression4 (MUL | DIV | MOD) expression5 | expression5;
 expression5: expression6 (NOT | MINUS) expression5 | expression6;
-expression6: expression6 (LBRACE | RBRACE | DOT) expression7 | expression7;
-expression7: ID | literal | function_call | LPAREN expression RPAREN;
+expression6: expression6 DOT expression7 | expression6 LBRACK expression RBRACK | expression7;
+expression7: ID | literal | function_call | LPAREN expression RPAREN | access_array_elm;
 
 // Function Call
 function_call: ID LPAREN list_expression RPAREN;
@@ -199,7 +203,7 @@ function_call: ID LPAREN list_expression RPAREN;
 // Method Call
 method_call: expression DOT expression;
 
-// DECLARED
+// // // DECLARED
 // 5.1 Variables -- checked --
 variables: VAR expression (typ ASSIGN expression | ASSIGN  expression  | typ) SEMI;
 

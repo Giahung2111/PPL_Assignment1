@@ -29,6 +29,16 @@ class MiniGoVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by MiniGoParser#dimension_dec_list.
+    def visitDimension_dec_list(self, ctx:MiniGoParser.Dimension_dec_listContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by MiniGoParser#dimension_dec.
+    def visitDimension_dec(self, ctx:MiniGoParser.Dimension_decContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by MiniGoParser#typ.
     def visitTyp(self, ctx:MiniGoParser.TypContext):
         return self.visitChildren(ctx)
