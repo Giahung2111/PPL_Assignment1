@@ -1,6 +1,2 @@
 
-        if (a > 2) {
-                                        return;
-        } else {
-            return;
-        }
+        var a = ((a + 2) * 3) + 5 * 6; 

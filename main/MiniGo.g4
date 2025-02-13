@@ -51,7 +51,7 @@ TRUE        : 'true' ;
 FALSE       : 'false' ;
 PUTSTRINGLN : 'PutStringLn';
 PUTINTLN    : 'PutIntLn';
-ARRAY: 'array';
+ARRAY       : 'array';
 
 // TODO Operators
 PLUS       : '+' ;
@@ -147,11 +147,12 @@ program: statements_list EOF;
 // Literal
 literal: array_lit | struct_lit | DECIMAL_LIT | FLOAT_LIT | STRING_LIT | bool_lit | NIL_LIT;
 bool_lit: TRUE | FALSE;
-array_lit: dimension_dec_list typ LBRACE list_expression RBRACE;
+type_array:  dimension_dec_list typ;
+array_lit: type_array LBRACE list_expression RBRACE;
 dimension_dec_list: dimension_dec dimension_dec_list | dimension_dec;
 dimension_dec: LBRACK DECIMAL_LIT RBRACK;
-
-typ: INT | FLOAT | BOOLEAN | STRING | STR | STRUCT | ARRAY;
+type_struct: ID;
+typ: INT | FLOAT | BOOLEAN | STRING | STR | type_struct | type_array;
 list_expression: list_expr | ;
 list_expr: expression COMMA list_expr | expression;
 access_array_elm: ID LBRACK DECIMAL_LIT RBRACK;
@@ -166,9 +167,11 @@ statements_list: statement statements_list | statement;
 statement: declaration_statement | call_statement | assignment_statement | if_statement | for_statement | break_statement | continue_statement | return_statement;
 //---
 // Declaration statement
-declaration_statement: variables | constants ;
-assignment_statement: lhs ASSIGN_OPERATOR expression;
-lhs: expression | access_array_elm; 
+declaration_statement: variables | constants | functions | methods | struct | struct_instance | accessing_struct_fields | modify_fields | define_method | call_instancemethod | interface;
+
+// Assignment Statement
+assignment_statement: lhs ASSIGN_OPERATOR expression SEMI;
+lhs: expression | access_array_elm | accessing_struct_fields; 
 
 // If Statement
 if_statement: ((IF | ELSE IF) expression | ELSE) LBRACE statements_list RBRACE;
@@ -185,7 +188,7 @@ continue_statement: CONTINUE SEMI;
 
 call_statement: ID LPAREN list_expression RPAREN SEMI;
 
-return_statement: RETURN expression;
+return_statement: RETURN (expression | ) SEMI;
 
 // Expression
 expression: expression OR expression1 | expression1;
@@ -211,13 +214,13 @@ variables: VAR expression (typ ASSIGN expression | ASSIGN  expression  | typ) SE
 constants: CONST ID ASSIGN expression SEMI;
 
 // 5.3 Functions 
-functions: FUNC ID LPAREN paramaters_list RPAREN typ LBRACE statements_list RBRACE;
+functions: FUNC ID LPAREN paramaters_list RPAREN (typ | ) LBRACE statements_list RBRACE;
 paramaters_list: paramaters | ;
 paramaters: paramater COMMA paramaters | paramater;
-paramater: ID typ;
+paramater: ID (typ | );
 
 // 5.4 Methods
-methods: FUNC LPAREN expression expression RPAREN expression LPAREN paramaters_list RPAREN typ LBRACE statements_list RBRACE;
+methods: FUNC LPAREN expression expression RPAREN expression LPAREN paramaters_list RPAREN (typ | ) LBRACE statements_list RBRACE;
 
 // // 4.6 Struct
 struct: TYPE expression STRUCT LBRACE fieldname_list RBRACE;
@@ -231,7 +234,7 @@ valueinstance: expression ':' expression;
 
 // Accessing the fields of a struct
 print_line: PUTINTLN | PUTSTRINGLN;
-accessing_fields: expression;
+accessing_struct_fields: expression;
 
 // Modify the fields of a truct
 modify_fields: expression COLONEQ expression;
@@ -243,8 +246,10 @@ define_method: FUNC LPAREN expression expression RPAREN expression LPAREN RPAREN
 call_instancemethod: expression;
 
 // // 4.7 Interface type
-interface: TYPE expression INTERFACE LBRACE statements_list RBRACE ;
+interface: TYPE ID INTERFACE LBRACE interface_method_list RBRACE (SEMI | WS | );
+interface_method_list: interface_method interface_method_list | interface_method; 
+interface_method: ID LPAREN paramaters_list RPAREN (typ | ) (SEMI | WS | );
 
 
 
-// //! -------------------------- end  parser structure -----------------------
+// //! -------------------------- End  parser structure -----------------------

@@ -24,6 +24,11 @@ class MiniGoVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by MiniGoParser#type_array.
+    def visitType_array(self, ctx:MiniGoParser.Type_arrayContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by MiniGoParser#array_lit.
     def visitArray_lit(self, ctx:MiniGoParser.Array_litContext):
         return self.visitChildren(ctx)
@@ -36,6 +41,11 @@ class MiniGoVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by MiniGoParser#dimension_dec.
     def visitDimension_dec(self, ctx:MiniGoParser.Dimension_decContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by MiniGoParser#type_struct.
+    def visitType_struct(self, ctx:MiniGoParser.Type_structContext):
         return self.visitChildren(ctx)
 
 
@@ -274,8 +284,8 @@ class MiniGoVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MiniGoParser#accessing_fields.
-    def visitAccessing_fields(self, ctx:MiniGoParser.Accessing_fieldsContext):
+    # Visit a parse tree produced by MiniGoParser#accessing_struct_fields.
+    def visitAccessing_struct_fields(self, ctx:MiniGoParser.Accessing_struct_fieldsContext):
         return self.visitChildren(ctx)
 
 
@@ -296,6 +306,16 @@ class MiniGoVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by MiniGoParser#interface.
     def visitInterface(self, ctx:MiniGoParser.InterfaceContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by MiniGoParser#interface_method_list.
+    def visitInterface_method_list(self, ctx:MiniGoParser.Interface_method_listContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by MiniGoParser#interface_method.
+    def visitInterface_method(self, ctx:MiniGoParser.Interface_methodContext):
         return self.visitChildren(ctx)
 
 

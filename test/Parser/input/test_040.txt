@@ -1,5 +1,6 @@
-    
-            type Calculator struct {
-                c Calculator
-                c Cal a int;         
-            }
+
+        if (a > 2) {
+                                        return;
+        } else {
+            return;
+        }

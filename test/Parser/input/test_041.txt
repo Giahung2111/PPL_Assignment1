@@ -1,4 +1,2 @@
 
-                                    func Add() {
-                                        a.foo() += 2;       
-                                    }
+        const a = a[2].foo(2, 3);
