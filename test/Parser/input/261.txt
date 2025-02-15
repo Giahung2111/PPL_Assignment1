@@ -1,0 +1,7 @@
+func square(n int) int {
+            return n * n;
+        }
+        
+        func main() {
+            putIntLn(square(5));
+        }

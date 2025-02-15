@@ -1,0 +1,3 @@
+    
+            func Alo() { for i < 10 {fu();} }
+        

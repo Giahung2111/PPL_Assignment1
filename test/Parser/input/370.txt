@@ -1,0 +1,3 @@
+    
+            var multi arr [a][1+1]int
+        

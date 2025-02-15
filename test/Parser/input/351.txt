@@ -1,0 +1,6 @@
+    
+            func Alo() 
+            {
+            x = foo()
+            return x + hoo() }
+        

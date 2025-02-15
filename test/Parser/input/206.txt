@@ -1,0 +1,6 @@
+func countdown(n int) {
+            for n > 0 {
+                putIntLn(n);
+                n -= 1;
+            }
+        }

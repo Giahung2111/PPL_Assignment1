@@ -1,0 +1,3 @@
+func main() {
+            var num int = 2;
+        }

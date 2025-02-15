@@ -1,0 +1,9 @@
+func main() {
+            var a int = 10;
+            var b int = 20;
+            if (a < b) {
+                if (b - a > 5) {
+                    putStringLn("b is much greater than a");
+                }
+            }
+        }

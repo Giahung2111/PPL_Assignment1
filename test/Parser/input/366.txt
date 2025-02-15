@@ -1,0 +1,4 @@
+ func Alo(){   
+            var multi arr [0xA][0o5]int
+            }
+        

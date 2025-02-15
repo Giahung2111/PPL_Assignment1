@@ -1,0 +1,11 @@
+type Student struct {
+            name string;
+            grades [3]int;
+        }
+        func main() {
+            var s Student = Student{name: "Alice", grades: [3]int{90, 85, 88}};
+            putStringLn(s.name);
+            for i := 0; i < 3; i += 1 {
+                putIntLn(s.grades[i]);
+            }
+        }

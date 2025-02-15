@@ -1,0 +1,1 @@
+var,int,=,123,;,func,test,(,x,int,,,y,float,),{,return,x,/,y,;,},;,const,z,boolean,=,true,&&,false,;,<EOF>

@@ -1,0 +1,4 @@
+func main() {
+            var a int = 1;
+            putIntLn(a + b + c);
+        }

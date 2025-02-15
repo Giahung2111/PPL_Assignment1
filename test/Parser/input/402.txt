@@ -1,0 +1,4 @@
+func Add() {
+                                        return (arr[2]).b
+                                        return (1).c
+                                               };

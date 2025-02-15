@@ -1,0 +1,3 @@
+    
+            var alo int = b[1].d.[3].(a).foo().1[1].1.-1.true.flase.nil.[1]int{1}."alo1234" 
+        

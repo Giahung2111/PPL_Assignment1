@@ -1,0 +1,16 @@
+    
+            func Alo() {
+                if (x < 10) {
+                    hoho();
+                } 
+                else if (x == 10) {
+                    fuho();
+                } else if (x == 11) {
+                    banveso();
+                } else if (x == 12) {
+                    fuho();
+                } else {
+                    banveso();
+                }
+            }
+        

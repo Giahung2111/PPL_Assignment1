@@ -1,0 +1,10 @@
+func main() {
+            var num int = 10;
+            if (num > 0) {
+                if (num % 2 == 0) {
+                    putStringLn("Even number");
+                } else {
+                    putStringLn("Odd number");
+                }
+            }
+        }

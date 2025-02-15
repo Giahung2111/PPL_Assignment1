@@ -1,0 +1,4 @@
+func Alo(){     
+            a[nil][ID{}] := b[foo()] + 1;
+            }
+        

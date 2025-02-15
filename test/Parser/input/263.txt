@@ -1,0 +1,7 @@
+func isPositive(n int) boolean {
+            return n > 0;
+        }
+        
+        func main() {
+            putBoolLn(isPositive(-1));
+        }

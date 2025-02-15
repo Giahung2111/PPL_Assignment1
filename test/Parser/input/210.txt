@@ -1,0 +1,10 @@
+func main() {
+            var a int = 5;
+            var b float = 3.14;
+            var c boolean = true;
+            var d string = "Hello";
+            putIntLn(a);
+            putFloatLn(b);
+            putBoolLn(c);
+            putStringLn(d);
+        }

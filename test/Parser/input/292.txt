@@ -1,0 +1,16 @@
+type Student struct {
+            name string;
+            grades [5]int;
+        }
+        func (s Student) Average() float {
+            var total int = 0;
+            for i := 0; i < 5; i += 1 {
+                total += s.grades[i];
+            }
+            return to_float(total) / 5.0;
+        }
+        func main() {
+            var s Student = Student{name: "Bob", grades: [5]int{90, 85, 78, 92, 88}};
+            var avg float = s.Average();
+            putFloatLn(avg);
+        }

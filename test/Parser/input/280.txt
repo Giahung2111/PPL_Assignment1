@@ -1,0 +1,15 @@
+type Circle struct {
+            radius float;
+        }
+        func (c Circle) SetRadius(r float) {
+            c.radius = r;
+        }
+        func (c Circle) Area() float {
+            return 3.14 * c.radius * c.radius;
+        }
+        func main() {
+            var c Circle;
+            c.SetRadius(5.0);
+            var area float = c.Area();
+            putFloatLn(area);
+        }

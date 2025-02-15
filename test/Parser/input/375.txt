@@ -1,0 +1,3 @@
+    
+            func Alo(x int, y int) int {return;}
+        

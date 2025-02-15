@@ -1,0 +1,7 @@
+func subtract(x int, y int) int {
+            return x - y;
+        }
+        func main() {
+            var result int = subtract(15, 5);
+            putIntLn(result);
+        }

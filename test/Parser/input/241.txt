@@ -1,0 +1,6 @@
+func main() {
+            var x int = 10;
+            var y float = 20.5;
+            putIntLn(x);
+            putFloatLn(y);
+        }

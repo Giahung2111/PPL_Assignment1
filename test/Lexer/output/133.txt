@@ -1,0 +1,1 @@
+func,sumRange,(,start,int,,,end,int,),int,{,var,sum,int,=,0,;,for,i,:=,start,;,i,<=,end,;,i,+=,1,{,sum,+=,i,;,},;,return,sum,;,},<EOF>

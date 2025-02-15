@@ -1,0 +1,9 @@
+func main() {
+            var sum int = 0;
+            for i := 1; i <= 3; i += 1 {
+                for j := 1; j <= 3; j += 1 {
+                    sum += i * j;
+                }
+            }
+            putIntLn(sum);
+        }

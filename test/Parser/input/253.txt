@@ -1,0 +1,8 @@
+func main() {
+            var flag bool = true;
+            if (flag) {
+                putStringLn("Flag is true");
+            } else {
+                putStringLn("Flag is false");
+            }
+        }

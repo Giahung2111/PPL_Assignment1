@@ -1,0 +1,11 @@
+func double(n int) int {
+            return n * 2;
+        }
+        
+        func triple(n int) int {
+            return n * 3;
+        }
+        
+        func main() {
+            putIntLn(double(triple(2)));
+        }

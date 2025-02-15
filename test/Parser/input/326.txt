@@ -1,0 +1,7 @@
+    
+            func Alo() {
+                for i, j := 0, 10; i < 10 && j > 0; i += 1, j -= 1 {
+                    putInt(i + j);
+                };
+            }
+        

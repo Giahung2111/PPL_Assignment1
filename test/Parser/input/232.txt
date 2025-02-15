@@ -1,0 +1,7 @@
+func isEven(n int) boolean {
+            return n % 2 == 0;
+        }
+        
+        func main() {
+            putBoolLn(isEven(4));
+        }

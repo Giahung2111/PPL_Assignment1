@@ -1,0 +1,6 @@
+func main() {
+            var arr [3]int = [3]int{1, 2, 3};
+            putIntLn(arr[0]);
+            putIntLn(arr[1]);
+            putIntLn(arr[2]);
+        }

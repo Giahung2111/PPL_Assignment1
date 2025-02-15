@@ -1,0 +1,13 @@
+func max(x int, y int) int {
+            if (x > y) {
+                return x;
+            } else {
+                return y;
+            }
+        }
+        func main() {
+            var a int = 7;
+            var b int = 14;
+            var result int = max(a, b);
+            putIntLn(result);
+        }

@@ -1,0 +1,5 @@
+func main() {    
+            PutStringLn(p.name) // Output: Alice
+            PutIntLn(p.age) // Output: 30
+            }
+        

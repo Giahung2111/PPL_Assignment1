@@ -1,0 +1,20 @@
+func sort(arr [5]int) [5]int {
+            var temp int;
+            for i := 0; i < 5; i += 1 {
+                for j := i + 1; j < 5; j += 1 {
+                    if (arr[i] > arr[j]) {
+                        temp = arr[i];
+                        arr[i] = arr[j];
+                        arr[j] = temp;
+                    }
+                }
+            }
+            return arr;
+        }
+        func main() {
+            var nums [5]int = [5]int{5, 3, 4, 1, 2};
+            var sorted [5]int = sort(nums);
+            for i := 0; i < 5; i += 1 {
+                putIntLn(sorted[i]);
+            }
+        }

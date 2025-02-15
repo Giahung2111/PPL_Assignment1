@@ -1,0 +1,15 @@
+type Animal interface {
+            DoSomething();
+            Speak() string;
+        }
+        
+        type Dog struct {}
+        
+        func (d Dog) Speak() string {
+            return "Woof";
+        }
+        
+        func main() {
+            var d Dog;
+            putStringLn(d.Speak());
+        }

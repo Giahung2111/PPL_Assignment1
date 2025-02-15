@@ -1,0 +1,7 @@
+func main() {
+            var arr [3]int = [3]int{10, 20, 30};
+            for index, value := range arr {
+                putIntLn(index);
+                putIntLn(value);
+            }
+        }

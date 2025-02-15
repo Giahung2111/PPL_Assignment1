@@ -1,0 +1,7 @@
+func main() {
+            var i int = 5;
+            for i > 0 {
+                putIntLn(i);
+                i -= 1;
+            }
+        }

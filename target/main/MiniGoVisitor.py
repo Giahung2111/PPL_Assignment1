@@ -89,6 +89,11 @@ class MiniGoVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by MiniGoParser#nullable_statements_list.
+    def visitNullable_statements_list(self, ctx:MiniGoParser.Nullable_statements_listContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by MiniGoParser#statements_list.
     def visitStatements_list(self, ctx:MiniGoParser.Statements_listContext):
         return self.visitChildren(ctx)

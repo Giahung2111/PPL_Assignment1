@@ -1,1 +1,1 @@
-Votien10cham,<EOF>
+x,+,y,;,3.14,;,a,*,b,-,c,;,<EOF>

@@ -1,0 +1,1 @@
+type,Employee,struct,{,name,string,;,salary,float,;,},;,func,increaseSalary,(,emp,Employee,,,percent,float,),Employee,{,emp,.,salary,+=,emp,.,salary,*,(,percent,/,100.0,),;,return,emp,;,},;,func,main,(,),{,var,emp,Employee,=,Employee,{,name,:,"Alice",,,salary,:,50000.0,},;,emp,=,increaseSalary,(,emp,,,10,),;,putFloatLn,(,emp,.,salary,),;,},<EOF>

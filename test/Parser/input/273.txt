@@ -1,0 +1,7 @@
+func multiply(x int, y int) int {
+            return x * y;
+        }
+        func main() {
+            var result int = multiply(3, 4);
+            putIntLn(result);
+        }

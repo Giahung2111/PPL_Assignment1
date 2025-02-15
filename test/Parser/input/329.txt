@@ -1,0 +1,6 @@
+    
+            func Alo() {
+                for index, 
+                    value := Range array {}
+            }
+        

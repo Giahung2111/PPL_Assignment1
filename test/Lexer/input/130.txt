@@ -1,0 +1,7 @@
+
+            func main() {
+                var x float = 5.25;
+                var y float = 2.75;
+                var result float = x * y + (x / y) - (x - y);
+                putFloatLn(result);
+            }

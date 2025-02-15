@@ -1,0 +1,4 @@
+func main() {
+            var str string = "Hello" + " " + "World";
+            putStringLn(str);
+        }

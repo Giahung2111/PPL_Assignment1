@@ -1,0 +1,12 @@
+type Employee struct {
+            name string;
+            salary float;
+        }
+        func (e Employee) ShowDetails() {
+            putStringLn("Name: " + e.name);
+            putFloatLn(e.salary);
+        }
+        func main() {
+            var emp Employee = Employee{name: "John", salary: 50000.0};
+            emp.ShowDetails();
+        }

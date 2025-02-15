@@ -1,0 +1,12 @@
+func main() {
+            var score int = 85;
+            if (score >= 90) {
+                putStringLn("Grade: A");
+            } else if (score >= 80) {
+                putStringLn("Grade: B");
+            } else if (score >= 70) {
+                putStringLn("Grade: C");
+            } else {
+                putStringLn("Grade: F");
+            }
+        }

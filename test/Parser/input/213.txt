@@ -1,0 +1,8 @@
+func main() {
+            var a int = 10;
+            if (a > 5) {
+                putStringLn("a is greater than 5");
+            } else {
+                putStringLn("a is less than or equal to 5");
+            }
+        }

@@ -1,0 +1,4 @@
+ func Alo(){    
+            var multi arr [a][1]int
+            }
+        

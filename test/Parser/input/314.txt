@@ -1,0 +1,9 @@
+    
+            func Alo() {
+                if (x > 10) {
+                    hoho();
+                } else if (x == 10) {
+                    var z str;
+                }
+            }
+        

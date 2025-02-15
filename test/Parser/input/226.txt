@@ -1,0 +1,5 @@
+func main() {
+            var x boolean = true;
+            var y boolean = false;
+            putBoolLn(x && y);
+        }

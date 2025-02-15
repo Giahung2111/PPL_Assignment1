@@ -1,0 +1,6 @@
+func main() {
+            var a float = 10.5;
+            var b float = 2.5;
+            var result float = a / b;
+            putFloatLn(result);
+        }

@@ -1,0 +1,9 @@
+func main() {
+            type Person struct {
+                name string;
+                age int;
+            }
+            var p Person = Person{name: "Alice", age: 30};
+            putStringLn(p.name);
+            putIntLn(p.age);
+        }

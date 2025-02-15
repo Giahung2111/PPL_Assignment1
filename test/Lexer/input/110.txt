@@ -1,0 +1,14 @@
+
+            type Point struct {
+                x int ;
+                y int ;
+            }
+
+            func (p Point) distance( ) float {
+                return sqrt(p.x * p.x + p.y * p.y) ;
+            }
+
+            func main( ) {
+                var p Point = Point{3, 4} ;
+                putFloatLn( p.distance( ) );
+            }
