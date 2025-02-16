@@ -189,7 +189,7 @@ statements_list: statement statements_list | statement;
 statement: declaration_statement | call_statement | assignment_statement | if_statement | for_statement | break_statement | continue_statement | return_statement;
 //---
 // Declaration statement
-declaration_statement: (variables | constants | functions | methods | struct | struct_instance | accessing_struct_fields | modify_fields | define_method | call_instancemethod | interface ) (SEMICOLON_NEWLINE | SEMI );
+declaration_statement: (variables | constants | functions | methods | struct | struct_instance | accessing_struct_fields | modify_fields | define_method | call_instancemethod | interface ) (SEMICOLON_NEWLINE | SEMI | );
 
 // Assignment Statement
 assignment_statement: lhs (COLONEQ | PLUSEQ | MINUSEQ | MULEQ | DIVEQ | MODEQ) expression (SEMICOLON_NEWLINE | SEMI );
@@ -201,9 +201,9 @@ if_statement: ((IF | ELSE IF) expression | ELSE) LBRACE nullable_statements_list
 
 // For Statement
 for_statement: basic_loop | ini_con_upd_loop | range_loop;
-basic_loop: FOR expression LBRACE nullable_statements_list RBRACE (SEMICOLON_NEWLINE | SEMI);
-ini_con_upd_loop:FOR (assignment_statement | variables SEMI) expression SEMI lhs (COLONEQ | PLUSEQ | MINUSEQ | MULEQ | DIVEQ | MODEQ) expression LBRACE nullable_statements_list RBRACE (SEMICOLON_NEWLINE | SEMI);
-range_loop: FOR expression COMMA expression COLONEQ RANGE (ID | array_lit) LBRACE nullable_statements_list RBRACE (SEMICOLON_NEWLINE | SEMI);
+basic_loop: FOR expression LBRACE nullable_statements_list RBRACE (SEMICOLON_NEWLINE | SEMI |);
+ini_con_upd_loop:FOR (assignment_statement | variables SEMI) expression SEMI lhs (COLONEQ | PLUSEQ | MINUSEQ | MULEQ | DIVEQ | MODEQ) expression LBRACE nullable_statements_list RBRACE (SEMICOLON_NEWLINE | SEMI |);
+range_loop: FOR expression COMMA expression COLONEQ RANGE (ID | array_lit) LBRACE nullable_statements_list RBRACE (SEMICOLON_NEWLINE | SEMI |);
 
 break_statement: BREAK (SEMICOLON_NEWLINE | SEMI);
 
@@ -211,7 +211,7 @@ continue_statement: CONTINUE (SEMICOLON_NEWLINE | SEMI );
 
 call_statement: ID LPAREN list_expression RPAREN (SEMICOLON_NEWLINE | SEMI );
 
-return_statement: RETURN (expression | ) (SEMICOLON_NEWLINE | SEMI );
+return_statement: RETURN list_expression (SEMICOLON_NEWLINE | SEMI );
 
 // Expression
 expression:  expression OR expression1 | expression1 ;
@@ -237,7 +237,8 @@ variables: VAR expression (typ ASSIGN expression | ASSIGN  expression  | typ);
 constants: CONST ID ASSIGN expression;
 
 // 5.3 Functions 
-functions: FUNC ID LPAREN paramaters_list RPAREN (typ | ) LBRACE nullable_statements_list RBRACE;
+typ_list: (typ COMMA typ_list | typ) | (LPAREN  (typ COMMA typ_list | typ) RPAREN);
+functions: FUNC ID LPAREN paramaters_list RPAREN (typ_list | ) LBRACE nullable_statements_list RBRACE;
 paramaters_list: paramaters | ;
 paramaters: paramater COMMA paramaters | paramater;
 paramater: ID (typ | );
@@ -246,7 +247,10 @@ paramater: ID (typ | );
 methods: FUNC LPAREN expression expression RPAREN expression LPAREN paramaters_list RPAREN (typ | ) LBRACE statements_list RBRACE;
 
 // // 4.6 Struct
-struct: TYPE ID STRUCT LBRACE fieldname_list RBRACE;
+struct: TYPE ID STRUCT LBRACE struct_elements_list RBRACE;
+struct_elements_list: struct_elements struct_elements_list |struct_elements ;
+struct_elements: fieldname_list | method_list ;
+method_list: methods method_list | methods;
 fieldname_list: fieldname fieldname_list | fieldname;
 fieldname: expression typ (SEMICOLON_NEWLINE | SEMI ) ;
 

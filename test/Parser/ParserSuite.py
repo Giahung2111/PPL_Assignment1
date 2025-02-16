@@ -1,1089 +1,1284 @@
 import unittest
 from TestUtils import TestParser
 
-# class ParserSuite(unittest.TestCase):
-
-#     def test_001(self):
-#         input = """/* This is a /* nested
-# multi-line
-# comment. */"""
-#         expect = "Error on line 3 col 12: <EOF>"
-#         self.assertTrue(TestParser.test(input,expect,301))
-
-#     def test_002(self):
-#         input = """func foo () {
-#         };"""
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,302))
-    
-#     def test_003(self):
-#         input = """func main({};"""
-#         expect = "Error on line 1 col 11: {"
-#         self.assertTrue(TestParser.test(input,expect,303))
-#     def test_004(self):
-#         input = """var int;"""
-#         expect = "Error on line 1 col 5: int"
-#         self.assertTrue(TestParser.test(input,expect,304))
-#     def test_005(self):
-#         input = """var i ;"""
-#         expect = "Error on line 1 col 7: ;"
-#         self.assertTrue(TestParser.test(input,expect,305))
-#     def test_006(self):
-#         self.assertTrue(TestParser.test("""const k = -a + -!-!c - ---[2]int{2};""", "Error on line 1 col 17: !", 306)) # --c hay -(-c)
-#     def test_007(self):     
-#         input = """    
-#             func Alo() {
-#                 if (x > 10) { foo() }
-#             } ;
-#         """
-#         expect = "Error on line 3 col 37: }"
-#         self.assertTrue(TestParser.test(input,expect,307))
-#     def test_008(self):
-#         input = """    
-#             func Alo() {
-#                 if (x > 10) { foo(); }
-#             } 
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,308))
-#     def test_009(self):
-#         input = """    
-#             func Alo() {if (x > 10) { foo(); }} 
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,309))
-#     def test_010(self):
-#         input = """    
-#             func Alo() 
-#             {
-#                 if (x > 10) { foo() }
-#             } 
-#         """
-#         expect = "Error on line 2 col 24: ;"
-#         self.assertTrue(TestParser.test(input,expect,310))
-
-#     def test_011(self):
-#         input = """    
-#             func Alo() {
-#                 if (x > 10) { } 
-#                 if (x > 10) {
-
-#                 } else if (x == 10) {
-#                     var z str;
-#                 } else {
-#                     var z ID;
-#                 }
-#             }
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,311))
-#     def test_012(self):
-#         input = """    
-#             func Alo() {
-#                 if (x > 10) { foo() }
-#             } 
-#         """
-#         expect = "Error on line 3 col 37: }"
-#         self.assertTrue(TestParser.test(input,expect,312))
-
-#     def test_013(self):
-#         input = """    
-#             func Alo() {
-#                 if (x > 10) {
-#                     hoho();
-#                 } else if (x == 10) {
-#                     var z str;
-#                 };
-#             }
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,313))
-#     def test_014(self):
-#         input = """    
-#             func Alo() {
-#                 if (x > 10) {
-#                     hoho();
-#                 } else if (x == 10) {
-#                     var z str;
-#                 }
-#             }
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,314))
-#     def test_015(self):
-#         input = """    
-#             func Alo() {
-#                 if (x > 10) {
-#                     hoho();
-#                 } 
-#                 else if (x == 10) {
-#                     hoho();
-#                 } else if (x == 11) {
-#                     hohoho();
-#                 };
-#             }
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,315))
-#     def test_016(self):
-#         input = """    
-#             func Alo() {
-#                 if (x > 10) {
-#                     hoho();
-#                 } 
-#                 else if (x == 10) {
-#                     hoho();
-#                 } else {
-#                     hohoho();
-#                 };
-#             }
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,316))
-#     def test_017(self):
-#         input = """    
-#             func Alo() {
-#                 if (x > 10) {
-#                     hoho();
-#                 } 
-#                 else if (x == 10) {
-#                     hoho();
-#                 } 
-#                 else {
-#                     hohoho();
-#                 }
-#             }
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,317))
-#     def test_018(self):
-#         input = """    
-#             func Alo() {
-#                 if (x < 10) {
-#                     hoho();
-#                 } 
-#                 else if (x == 10) {
-#                     fuho();
-#                 } else if (x == 11) {
-#                     banveso();
-#                 } else if (x == 12) {
-#                     fuho();
-#                 } else {
-#                     banveso();
-#                 };
-#             }
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,318))
-#     def test_019(self):
-#         input = """    
-#             func Alo() {
-#                 if (x < 10) {
-#                     hoho();
-#                 } 
-#                 else if (x == 10) {
-#                     fuho();
-#                 } else if (x == 11) {
-#                     banveso();
-#                 } else if (x == 12) {
-#                     fuho();
-#                 } else {
-#                     banveso();
-#                 }
-#             }
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,319))
-
-
-
-
-#     def test_020(self):
-#         input = """ 
-#         func Alo() {   
-#             for i < 10 {}
-#                 for i := 0; i < 10; i += 1 {}
-#                 for index, value := range array {}
-#         }
-#         """
-#         expect = "Error on line 4 col 23: :="
-#         self.assertTrue(TestParser.test(input,expect,320))
-
-#     def test_021(self):
-#         input = """ 
-#         func Alo() {   
-#             for index, value := range [3]int{1,2,3} {
-#                 foo();
-#             }
-#         }
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,321))
-#     def test_022(self):
-#         input = """    
-#             func Alo() {
-#                 for i := 0; 
-#                     i < 10; 
-#                     i += 1 {
-#                     }
-#             }
-#         """
-#         expect = "Error on line 3 col 23: :="
-#         self.assertTrue(TestParser.test(input,expect,322))
-#     def test_023(self):
-#         input = """    
-#             for index, value := range [3]int{1,2,3} {
-#                 foo();
-#             }
-#         """
-#         expect = "Error on line 2 col 13: for"
-#         self.assertTrue(TestParser.test(input,expect,323))
-#     def test_024(self):
-#         input = """    
-#             func Alo() {     
-
-
-
-#                 for i < 10
-#                 {
-                 
-                
-#                 }
-
-
-
-                
-#             }
-#         """
-#         expect = "Error on line 7 col 17: {"
-#         self.assertTrue(TestParser.test(input,expect,324))
-#     def test_025(self):
-#         input = """    
-#             func Alo() { for i < 10 {fu();} }
-#         """
-#         expect = "Error on line 2 col 45: }"
-#         self.assertTrue(TestParser.test(input,expect,325))
-#     def test_026(self):
-#         input = """    
-#             func Alo() {
-#                 for i, j := 0, 10; i < 10 && j > 0; i += 1, j -= 1 {
-#                     putInt(i + j);
-#                 };
-#             }
-#         """
-#         expect = "Error on line 3 col 29: 0"
-#         self.assertTrue(TestParser.test(input,expect,326))
-#     def test_027(self):
-#         input = """    
-#             func Alo() {
-#                 for i := 0; i += 1 {}
-#             }
-#         """
-#         expect = "Error on line 3 col 23: :="
-#         self.assertTrue(TestParser.test(input,expect,327))
-#     def test_028(self):
-#         input = """    
-#             func Alo() {
-#                 for i < 10; i += 1 {}
-#             }
-#         """
-#         expect = "Error on line 3 col 31: +="
-#         self.assertTrue(TestParser.test(input,expect,328))
-
-
-#     def test_029(self):
-#         input = """    
-#             func Alo() {
-#                 for index, 
-#                     value := Range array {}
-#             }
-#         """
-#         expect = "Error on line 4 col 30: Range"
-#         self.assertTrue(TestParser.test(input,expect,329))
-#     def test_030(self):
-#         input = """    
-#             for index, value := range [3]int{1,2,3} {
-#                 foo();
-#             };
-#         """
-#         expect = "Error on line 2 col 13: for"
-#         self.assertTrue(TestParser.test(input,expect,330))
-#     def test_031(self):
-#         input = """    
-#             for index, value := range [3]int{1,2,3} {
-#                 foo();
-#             }
-#         """
-#         expect = "Error on line 2 col 13: for"
-#         self.assertTrue(TestParser.test(input,expect,331))
-#     def test_032(self):
-#         input = """    
-#             for index, value := range [3]int{1,2,3} {
-#                 foo();
-#             };
-#         """
-#         expect = "Error on line 2 col 13: for"
-#         self.assertTrue(TestParser.test(input,expect,332))
-#     def test_033(self):
-#         input = """    
-#             for index, value := range [3]int{1,2,3} {
-#                 foo();
-#             }
-#         """
-#         expect = "Error on line 2 col 13: for"
-#         self.assertTrue(TestParser.test(input,expect,333))
-#     def test_034(self):
-#         input = """    
-#             for index, value := range [3]int{1,2,3} {
-#                 foo();
-#             };
-#         """
-#         expect = "Error on line 2 col 13: for"
-#         self.assertTrue(TestParser.test(input,expect,334))
-#     def test_035(self):
-#         input = """    
-#             for index, value := range [3]int{1,2,3} {
-#                 foo();
-#             }
-#         """
-#         expect = "Error on line 2 col 13: for"
-#         self.assertTrue(TestParser.test(input,expect,335))
-#     def test_036(self):
-#         input = """    
-#             for index, value := range [3]int{1,2,3} {
-#                 foo();
-#             };
-#         """
-#         expect = "Error on line 2 col 13: for"
-#         self.assertTrue(TestParser.test(input,expect,336))
-#     def test_037(self):
-#         input = """    
-#             for index, value := range [3]int{1,2,3} {
-#                 foo();
-#             }
-#         """
-#         expect = "Error on line 2 col 13: for"
-#         self.assertTrue(TestParser.test(input,expect,337))
-#     def test_038(self):
-#         input = """    
-#             for index, value := range [3]int{1,2,3} {
-#                 foo();
-#             };
-#         """
-#         expect = "Error on line 2 col 13: for"
-#         self.assertTrue(TestParser.test(input,expect,338))
-#     def test_039(self):
-#         input = """    
-#             for index, value := range [3]int{1,2,3} {
-#                 foo();
-#             }
-#         """
-#         expect = "Error on line 2 col 13: for"
-#         self.assertTrue(TestParser.test(input,expect,339))
-
-
-
-#     def test_040(self):
-#         input = """    
-#             var matrix [3][4]int;
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,340))
-#     def test_041(self):
-#         input = input = """
-#             var matrix [2][3][4]int = {
-#                 {
-#                     {1, 2, 3, 4}, 
-#                     {5, 6, 7, 8}, 
-#                     {9, 10, 11, 12}
-#                 }, 
-#                 {
-#                     {13, 14, 15, 16}, 
-#                     {17, 18, 19, 20}, 
-#                     {21, 22, 23, 24}
-#                 }
-#             };
-#         """
-#         expect = "Error on line 2 col 39: {"
-#         self.assertTrue(TestParser.test(input,expect,341))
-#     def test_042(self):
-#         input = """    
-#             x := matrix[1][2];
-#         """
-#         expect = "Error on line 2 col 13: x"
-#         self.assertTrue(TestParser.test(input,expect,342))
-#     def test_043(self):
-#         input = """    
-#             matrix[0][1] = 42;
-#         """
-#         expect = "Error on line 2 col 13: matrix"
-#         self.assertTrue(TestParser.test(input,expect,343))
-#     def test_044(self):
-#         input = """    
-#             for i := 0; i < 2; i += 1 {
-#                 for j := 0; j < 3; j += 1 {
-#                     alo(matrix[i][j])
-#                 }
-#             };
-#         """
-#         expect = "Error on line 2 col 13: for"
-#         self.assertTrue(TestParser.test(input,expect,344))
-#     def test_045(self):
-#         input = """    
-#             const a = [5]int{{1, 0x1}, ID{}, 1.2, "s", true, false, nil, [1]int{1}}
-#         """
-#         expect = "Error on line 2 col 43: }"
-#         self.assertTrue(TestParser.test(input,expect,345))
-#     def test_046(self):
-#         input = """    
-#             var alo int = b[1].d.[3].(a).foo().1[1].1.-1.true.flase.nil.[1]int{1}."alo1234" 
-#         """
-#         expect = "Error on line 2 col 37: ."
-#         self.assertTrue(TestParser.test(input,expect,346))
-#     def test_047(self):
-#         input = """    
-#             var a = [3]int{1,2,3};
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,347))
-#     def test_048(self):
-#         input = """    
-#             var a [33]float = {13,45,25};
-#         """
-#         expect = "Error on line 2 col 31: {"
-#         self.assertTrue(TestParser.test(input,expect,348))
-#     def test_049(self):
-#         input = """    
-#             arr := [2][2]int{{{{{{0}}}}}} 
-#         """
-#         expect = "Error on line 2 col 13: arr"
-#         self.assertTrue(TestParser.test(input,expect,349))
-
-
-
-
-
-#     def test_050(self):
-#         input = """    
-#             func Alo() {
-#                 arr := [2][2]int{{2,3}} 
-#             }
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,350))
-#     def test_051(self):
-#         input = """    
-#             func Alo() 
-#             {
-#             x = foo()
-#             return x + hoo() }
-#         """
-#         expect = "Error on line 2 col 24: ;"
-#         self.assertTrue(TestParser.test(input,expect,351))
-#     def test_052(self):
-#         input = """    
-#             func Alo() {
-#             x = foo()
-#             return x + hoo() } 
-#         """
-#         expect = "Error on line 4 col 30: }"
-#         self.assertTrue(TestParser.test(input,expect,352))
-#     def test_053(self):
-#         input = """    
-#             func Alo() {
-#             x = foo();return x+hoo()} 
-#         """
-#         expect = "Error on line 3 col 37: }"
-#         self.assertTrue(TestParser.test(input,expect,353))
-#     def test_054(self):
-#         input = """    
-#             func Alo() {
-#             x = foo();return x+hoo();}
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,354))
-#     def test_055(self):
-#         input = """    
-#             func Alo() {
-#             const x = 1;
-#             return x+=1+=1+=1+=1+=1;
-#             }
-#         """
-#         expect = "Error on line 4 col 21: +="
-#         self.assertTrue(TestParser.test(input,expect,355))
-#     def test_056(self):
-#         input = """    
-#             func Alo() {
-#             x = foo()
-#             return x + hoo() 
-#             }"""
-#         expect = "Error on line 5 col 14: <EOF>"
-#         self.assertTrue(TestParser.test(input,expect,356))
-#     def test_057(self):
-#         input = """    
-#             var putInt = 1.1.1.1
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,357))
-#     def test_058(self):
-#         input = """    
-#             var getString =   1 
-#                             + 2 
-#                             + 3
-#         """
-#         expect = "Error on line 3 col 29: +"
-#         self.assertTrue(TestParser.test(input,expect,358))
-#     def test_059(self):
-#         input = """    
-#             var putStringLn = 1 +
-#                               2 +
-#                               3  
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,359))
-
-
-#     def test_060(self):
-#         input = """    
-#             func Alo(); 
-#             {x = foo();return x+hoo();}
-#         """
-#         expect = "Error on line 2 col 23: ;"
-#         self.assertTrue(TestParser.test(input,expect,360))
-#     def test_061(self):
-#         input = """    
-#             func Add() {
-#                 if (x.foo().b[2]) 
-#                 {
-#                     if (){}
-#                 } 
-#             }"""
-#         expect = "Error on line 3 col 35: ;"
-#         self.assertTrue(TestParser.test(input,expect,361))
-#     def test_062(self):
-#         input = """
-#             func Add() {
-#                 for const i = 0; i < 10; i += 1 {
-#                     // loop body
-#                 }
-#             }"""
-#         expect = "Error on line 3 col 21: const"
-#         self.assertTrue(TestParser.test(input,expect,362))
-#     def test_063(self):
-#         input = """ func main () {
-#                         arr :=[2][3]int{
-#                         {1,2,3}, 
-#                         {3,4.5}};
-#                     }"""
-#         expect = "Error on line 5 col 22: <EOF>"
-#         self.assertTrue(TestParser.test(input,expect,363))
-#     def test_064(self):
-#         input = """ func main () {
-#                         arr :=[2][3]int{
-#                         {1,2}, 
-#                         {3,4}
-#                         };
-#                     }"""
-#         expect = "Error on line 4 col 30: ;"
-#         self.assertTrue(TestParser.test(input,expect,364))
-#     def test_065(self):
-#         input = """    
-#             var a  = [1]int{4} + 2; 
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,365))
-#     def test_066(self):
-#         input = """ func Alo(){   
-#             var multi arr [0xA][0o5]int
-#             }
-#         """
-#         expect = "Error on line 2 col 27: ["
-#         self.assertTrue(TestParser.test(input,expect,366))
-#     def test_067(self):
-#         input = """ func Alo(){   
-#             a[2+1][3+a] := b[2+=1] + 1;
-#             }
-#         """
-#         expect = "Error on line 2 col 21: +"
-#         self.assertTrue(TestParser.test(input,expect,367))
-#     def test_068(self):
-#         input = """  func Alo(){  
-#             a[2+1][3+a] := b[!1] + 1;
-#             }
-#         """
-#         expect = "Error on line 2 col 21: +"
-#         self.assertTrue(TestParser.test(input,expect,368))
-#     def test_069(self):
-#         input = """ func Alo(){    
-#             var multi arr [a][1]int
-#             }
-#         """
-#         expect = "Error on line 2 col 27: ["
-#         self.assertTrue(TestParser.test(input,expect,369))
-#     def test_070(self):
-#         input = """    
-#             var multi arr [a][1+1]int
-#         """
-#         expect = "Error on line 2 col 27: ["
-#         self.assertTrue(TestParser.test(input,expect,370))
-#     def test_071(self):
-#         input = """    
-#             var multi arr [nil][1]int
-#         """
-#         expect = "Error on line 2 col 27: ["
-#         self.assertTrue(TestParser.test(input,expect,371))
-#     def test_072(self):
-#         input = """func Alo(){     
-#             a[nil][ID{}] := b[foo()] + 1;
-#             }
-#         """
-#         expect = "Error on line 2 col 20: ID"
-#         self.assertTrue(TestParser.test(input,expect,372))
-#     def test_073(self):
-#         input = """    
-#             type alo interface {
-
-#             add()
-
-#             }"""
-#         expect = "Error on line 6 col 14: <EOF>"
-#         self.assertTrue(TestParser.test(input,expect,373))
-#     def test_074(self):
-#         input = """    
-#             var putLn = 1 + 2 + 3
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,374))
-#     def test_075(self):
-#         input = """    
-#             func Alo(x int, y int) int {return;}
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,375))
-#     def test_076(self):
-#         input = """
-#                 func Add() {
-#                     a.foo() += 2;       
-#                 }
-#                 """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,376))
-#     def test_077(self):# trg
-#         input = """    
-#             type Person struct {
-#                 name string ;
-#                 age int ;   
-#             }
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,377))
-#     def test_078(self):# trg
-#         input = """    
-#             type Person struct {
-#                 name string ;
-#                 age int ;   
-#             }
-#             p := Person{name: "Alice", age: 30}
-#         """
-#         expect = "Error on line 6 col 13: p"
-#         self.assertTrue(TestParser.test(input,expect,378))
-#     def test_079(self):# trg
-#         input = """func main() {    
-#             PutStringLn(p.name) // Output: Alice
-#             PutIntLn(p.age) // Output: 30
-#             }
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,379))
-#     def test_080(self):
-#         input = """    
-#             type Person struct {}
-#         """
-#         expect = "Error on line 2 col 33: }"
-#         self.assertTrue(TestParser.test(input,expect,380))
-#     def test_081(self):
-#         input = """    
-#             var z ALO = [2]int{};
-#         """
-#         expect = "Error on line 2 col 32: }"
-#         self.assertTrue(TestParser.test(input,expect,381))
-#     def test_082(self):
-#         input = """    
-#             func (c c) Add(x int) {};
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,382))
-#     def test_083(self):
-#         input = """    
-#             func (c c)
-#               Add(x int)
-#                 {
-#                 };
-#         """
-#         expect = "Error on line 2 col 23: ;"
-#         self.assertTrue(TestParser.test(input,expect,383))
-#     def test_084(self):
-#         input = """    
-#             func (c c) Add(x int) {
-#             foo();
-#             };
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,384))
-#     def test_085(self):
-#         input = """    
-#             func (c c) Add(x int) {
-#             foo()};
-#         """
-#         expect = "Error on line 3 col 18: }"
-#         self.assertTrue(TestParser.test(input,expect,385))
-#     def test_086(self):
-#         input = """    
-#             var a = a.foo()[2];
-#         """
-#         expect = "Error on line 2 col 31: ;"
-#         self.assertTrue(TestParser.test(input,expect,386))
-#     def test_087(self):
-#         input = """    
-#             var c [2][3]ID = [2][3]ID{{1,2,3},{4,5,6}};
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,387))
-#     def test_088(self):
-#         input = """    
-#             var c [2][3]ID
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,388))
-#     def test_089(self):
-#         input = """    
-#             var putLn = nil
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,389))
-#     def test_090(self):# trg
-#         input = """    
-#             func (p Person) Greet() string {
-#                 return "Hello, " + p.name
-#             }
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,390))
-#     def test_091(self):# trg
-#         input = """    
-#             type Calculator interface {
-#                 Add(x, y int) int;
-#                 Subtract(a, b float, c int) float;
-#                 Reset()
-#                 SayHello(name string)
-#             }
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,391))
-#     def test_092(self):# trg
-#         input = """    
-#             type Calculator struct {
-#                 value int;
-#             }
-#             func (c Calculator) Add(x int) int {
-#                 c.value += x;
-#                 return c.value;
-#             }
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,392))
-#     def test_093(self):
-#         input = """    
-#             func (p Person) Greet() string {
-#                 for index, value := range STRUCT{}{
-#                     // loop body                                   
-#                 };
-#             };  
-#         """
-#         expect = "Error on line 3 col 51: {"
-#         self.assertTrue(TestParser.test(input,expect,393))
-#     def test_094(self):#trg
-#         input = """func Alo(){     
-#             arr := [3]int{10, 20, 30}
-#             marr := [2][3]int{{1, 2, 3}, {4, 5, 6}}
-#             }
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,394))
-#     def test_095(self):
-#         input = """
-#         func Alo(){     
-#             if (x > 10) {
-#                 println("x is greater than 10");
-#             } else if (x == 10) {
-#                 println("x is equal to 10");
-#             } else {
-#                 println("x is less than 10");
-#             }
-#         }
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,395))
-#     def test_096(self):#trg
-#         input = """func Alo(){     
-#             arr := [3]int{10, 20, 30}
-#             for _, value := range arr {
-#                 // value: 10, 20, 30
-#             }
-#             }
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,396))
-#     def test_097(self):#trg
-#         input = """func Alo(){     
-#                 arr := [3]int{10, 20, 30}
-#                 for index, value := range arr {
-#                     // index: 0, 1, 2
-#                     // value: 10, 20, 30
-#                 }
-#             }
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,397))
-#     def test_098(self):
-#         input = """func Alo(){    
-#             str1 := "Hello"
-#             str2 := "World"
-#             str3 := str1 + " " + str2 // str3 == "Hello World"
-#             str4 := "apple"
-#             str5 := "banana"
-#             result := str4 == str5 // result == false
-#             }
-#         """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,398))
-#     def test_099(self):
-#         input = """var y = "Hello\\r\\n"; """
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,399))
-#     def test_100(self):
-#         input = """var y = "Hello\r\n"; """
-#         expect = "Hello"
-#         self.assertTrue(TestParser.test(input,expect,400))
-#     def test_101(self):
-#         input = """const a = [1]int{[1]int{1}};"""
-#         expect = "successful"
-#         self.assertTrue(TestParser.test(input,expect,401))
-
-#     def test_102(self):
-#         self.assertTrue(TestParser.test("""func Add() {
-#                                         return (arr[2]).b
-#                                         return (1).c
-#                                                };""", "successful", 402))
-#     def test_103(self):
-#         self.assertTrue(TestParser.test("""func Add() {// alo
-#                                                }// alo
-#                                                """, "successful", 403))
 class ParserSuite(unittest.TestCase):
-    def test_001(self):
-        """Literal"""
-        self.assertTrue(TestParser.test("const Votien = 1;", "successful", 1))
+    def test_200(self):
+        """Test function declaration with parameters"""
+        input = """func add() int {
+            }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 200))
 
-    def test_002(self):
-        """Literal"""
-        self.assertTrue(TestParser.test("const Votien = true;", "successful", 2))
+    def test_201(self):
+        """Test variable declarations"""
+        input = """var x int = 10;
+        var y float = 3.14;
+        var z string = "hello";
+        z = "abc";
+        """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 201))
 
-    def test_003(self):
-        """Literal"""
-        self.assertTrue(TestParser.test("const Votien = [5][0]string{1, \"string\"};", "successful", 3))
+    def test_202(self):
+        """Test struct declaration"""
+        input = """type Point struct {
+            x int;
+            y int;
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 202))
 
-    def test_004(self):
-        """Literal"""
-        self.assertTrue(TestParser.test("const Votien = [1.]ID{1, 3};", "Error on line 1 col 16: 1.", 4))
+    def test_203(self):
+        """Test function with return statement"""
+        input = """func square(n int) int {
+            return n * n;
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 203))
 
-    def test_005(self):
-        """Literal"""
-        self.assertTrue(TestParser.test("const Votien = Person{name: \"Alice\", age: 30};", "successful", 5))
-
-    def test_006(self):
-        """expression"""
-        self.assertTrue(TestParser.test("const Votien = 1 || 2 && c + 3 / 2 - -1;", "successful", 6))
-
-    def test_007(self):
-        """expression"""
-        self.assertTrue(TestParser.test("const Votien = 1[2] + foo()[2] + ID[2].b.b;", "successful", 7))
-
-    def test_008(self):
-        """expression"""
-        self.assertTrue(TestParser.test("const Votien = ca.foo(132) + b.c[2];", "successful", 8))
-
-    def test_009(self):
-        """expression"""
-        self.assertTrue(TestParser.test("const Votien = a.a.foo();", "successful", 9))
-
-    def test_010(self):
-        """declared variables"""
-        self.assertTrue(TestParser.test("""
-            var x int = foo() + 3 / 4;
-            var y = "Hello" / 4;   
-            var z str;
-        """, "successful", 10))
-
-    def test_011(self):
-        """declared constants"""
-        self.assertTrue(TestParser.test("""
-            const VoTien = a.b() + 2;
-        """, "successful", 11))
-
-    def test_012(self):
-        """declared function"""
-        self.assertTrue(TestParser.test("""
-            func VoTien(x int, y int) int {return;}
-            func VoTien1() [2][3] ID {return;};        
-            func VoTien2() {return;}                                       
-        """, "successful", 12))
-
-    def test_013(self):
-        """declared method"""
-        self.assertTrue(TestParser.test("""
-            func (c Calculator) VoTien(x int) int {return;};  
-            func (c Calculator) VoTien() ID {return;}      
-            func (c Calculator) VoTien(x int, y [2]VoTien) {return;}                                                      
-        """, "successful", 13))
-
-    def test_014(self):
-        """declared struct"""
-        self.assertTrue(TestParser.test("""
-            type VoTien struct {
-                VoTien string ;
-                VoTien [1][3]VoTien ;                     
-            }                                                                     
-        """, "successful", 14))
-
-    def test_015(self):
-        """declared Interface"""
-        self.assertTrue(TestParser.test("""
-            type VoTien struct {}                                                                       
-        """, "Error on line 2 col 32: }", 15))
-
-    def test_016(self):
-        """declared Interface"""
-        self.assertTrue(TestParser.test("""
-            type Calculator interface {
-                                                
-                Add(x, y int) int;
-                Subtract(a, b float, c int) [3]ID;
-                Reset()
-                                                
-                SayHello(name string);
-                                                
+    def test_204(self):
+        """Test if-else statement"""
+        input = """func checkEven(n int) string {
+            if (n % 2 == 0) {
+                return "even";
+            } else {
+                return "odd";
             }
-            type VoTien interface {}                                                                       
-        """, "Error on line 11 col 35: }", 16))
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 204))
 
-    def test_017(self):
-        """declared_statement"""
-        self.assertTrue(TestParser.test("""    
-            func VoTien() {
-                var x int = foo() + 3 / 4;
-                var y = "Hello" / 4;   
-                var z str;
-                                            
-                const VoTien = a.b() + 2;
-            }                                       
-        """, "successful", 17))
+    def test_205(self):
+        """Test for loop"""
+        input = """func sum(n int) int {
+            var total int = 0;
+            for i := 0; i < n; i += 1 {
+                total += i;
+            }
+            return total;
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 205))
 
-    def test_018(self):
+    def test_206(self):
+        """Test while loop"""
+        input = """func countdown(n int) {
+            for n > 0 {
+                putIntLn(n);
+                n -= 1;
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 206))
+
+    def test_207(self):
+        """Test array declaration and access"""
+        input = """var arr [5]int = [5]{1, 2, 3, 4, 5};
+        func getElement(index int) int {
+            return arr[index];
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 207))
+
+    def test_208(self):
+        """Test nested function calls"""
+        input = """func compute(x int, y int) int {
+            return add(square(x), square(y));
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 208))
+
+    def test_209(self):
+        """Test main function with basic operations"""
+        input = """func main() {
+            var a int = 5;
+            var b int = 10;
+            var c int = a + b * 2 - (a / b);
+            putIntLn(c);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 209))
+        
+    def test_210(self):
+        """Test variable declaration with different types"""
+        input = """func main() {
+            var a int = 5;
+            var b float = 3.14;
+            var c boolean = true;
+            var d string = "Hello";
+            putIntLn(a);
+            putFloatLn(b);
+            putBoolLn(c);
+            putStringLn(d);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 210))
+
+    def test_211(self):
+        """Test array declaration and access"""
+        input = """func main() {
+            var arr [3]int = [3]int{1, 2, 3};
+            putIntLn(arr[0]);
+            putIntLn(arr[1]);
+            putIntLn(arr[2]);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 211))
+
+    def test_212(self):
+        """Test struct declaration and access"""
+        input = """func main() {
+            type Person struct {
+                name string;
+                age int;
+            }
+            var p Person = Person{name: "Alice", age: 30};
+            putStringLn(p.name);
+            putIntLn(p.age);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 212))
+
+    def test_213(self):
+        """Test if-else statement"""
+        input = """func main() {
+            var a int = 10;
+            if (a > 5) {
+                putStringLn("a is greater than 5");
+            } else {
+                putStringLn("a is less than or equal to 5");
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 213))
+
+    def test_214(self):
+        """Test for loop with range"""
+        input = """func main() {
+            var arr [3]int = [3]int{10, 20, 30};
+            for index, value := range arr {
+                putIntLn(index);
+                putIntLn(value);
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 214))
+
+    def test_215(self):
+        """Test function with parameters and return value"""
+        input = """func add(x int, y int) int {
+            return x + y;
+        }
+        func main() {
+            var result int = add(3, 4);
+            putIntLn(result);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 215))
+
+    def test_216(self):
+        """Test method declaration and call"""
+        input = """type Calculator struct {
+            value int;
+        }
+        func (c Calculator) add(x int) int {
+            c.value += x;
+            return c.value;
+        }
+        func main() {
+            var calc Calculator = Calculator{value: 10};
+            var result int = calc.add(5);
+            putIntLn(result);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 216))
+
+    def test_217(self):
+        """Test nested if-else statements"""
+        input = """type Person struct { 
+            name string; 
+            age int; 
+            func (p Person) getAge() int {
+                return p.age;
+            }
+        };"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 217))
+
+    def test_218(self):
         """assign_statement"""
         self.assertTrue(TestParser.test("""    
             func VoTien() {
                 x  := foo() + 3 / 4;
-                x.c[2][4] := 1 + 2;                       
+                x.c[2][4] = 1 + 2;                       
             }                                       
-        """, "successful", 18))
+        """, "successful", 218))
 
-    def test_019(self):
-        """for_statement"""
-        self.assertTrue(TestParser.test("""    
-            func VoTien() {
-                if (x > 10) {return; } 
-                if (x > 10) {
-                  return; 
-                } else if (x == 10) {
-                    var z str;
-                } else {
-                    var z ID;
+    def test_219(self):
+        """Test multiple function declarations and calls"""
+        input = """func add(x int, y int) int {
+            return x + y;
+        }
+        func subtract(x int, y int) int {
+            return x - y;
+        }
+        func main() {
+            var a int = 10;
+            var b int = 5;
+            var sum int = add(a, b);
+            var diff int = subtract(a, b);
+            putIntLn(sum);
+            putIntLn(diff);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 219))
+        
+    def test_220(self):
+        """Test function declaration and basic arithmetic operations"""
+        input = """func main() {
+            var x int = 10;
+            var y int = 20;
+            var z int = x + y * 2;
+            putIntLn(z);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 220))
+
+    def test_221(self):
+        """Test variable declaration and assignment"""
+        input = """func main() {
+            var a int;
+            a = 5;
+            putIntLn(a);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 221))
+
+    def test_222(self):
+        """Test if-else statement"""
+        input = """func main() {
+            var a int = 10;
+            if (a > 5) {
+                putStringLn("Greater than 5");
+            } else {
+                putStringLn("Less than or equal to 5");
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 222))
+
+    def test_223(self):
+        """Test for loop"""
+        input = """func main() {
+            for i := 0; i < 5; i += 1 {
+                putIntLn(i);
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 223))
+
+    def test_224(self):
+        """Test struct declaration and initialization"""
+        input = """type Person struct {
+            name string;
+            age int;
+        }
+        
+        func main() {
+            var p Person = Person{name: "Alice", age: 30};
+            putStringLn(p.name);
+            putIntLn(p.age);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 224))
+
+    def test_225(self):
+        """Test array declaration and access"""
+        input = """func main() {
+            var arr [5]int;
+            arr[0] = 10;
+            putIntLn(arr[0]);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 225))
+
+    def test_226(self):
+        """Test boolean operations"""
+        input = """func main() {
+            var x boolean = true;
+            var y boolean = false;
+            putBoolLn(x && y);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 226))
+
+    def test_227(self):
+        """Test nested if statements"""
+        input = """func main() {
+            var a int = 10;
+            if (a > 5) {
+                if (a < 20) {
+                    putStringLn("Between 5 and 20");
                 }
             }
-        """, "successful", 19))
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 227))
 
-    def test_020(self):
-        """if_statement"""
-        self.assertTrue(TestParser.test("""    
-            func VoTien() {
-                for i < 10 {return; }
-                for i := 0; i < 10; i += 1 {return; }
-                for index, value := range array {return; }
+    def test_228(self):
+        """Test function call with arguments"""
+        input = """func add(a int, b int) int {
+            return a + b;
+        }
+        
+        func main() {
+            var result int = add(3, 4);
+            putIntLn(result);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 228))
+
+    def test_229(self):
+        """Test invalid syntax"""
+        input = """func main() {
+            var x int = 10;
+            putIntLn(x);
+        }""" 
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 229))
+
+    def test_230(self):
+        """Test while-like loop using for"""
+        input = """func main() {
+            var i int = 0;
+            for i < 5 {
+                putIntLn(i);
+                i += 1;
             }
-        """, "successful", 20))
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 230))
 
-    def test_021(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            const a = 0b11;                         
-        """, "successful", 21))
+    def test_231(self):
+        """Test empty main function"""
+        input = """func main() {}"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 231))
 
-    def test_025(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = [true]int{1};                         
-        """, "Error on line 2 col 28: true", 25))
+    def test_232(self):
+        """Test function returning a boolean"""
+        input = """func isEven(n int) boolean {
+            return n % 2 == 0;
+        }
+        
+        func main() {
+            putBoolLn(isEven(4));
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 232))
 
-    def test_031(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = ID {};                         
-        """, "successful", 31))
+    def test_233(self):
+        """Test nested loops"""
+        input = """func main() {
+            for i := 0; i < 3; i += 1 {
+                for j := 0; j < 3; j += 1 {
+                    putIntLn(i * j);
+                }
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 233))
 
-    def test_032(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = ID {a: 2, b: 2 + 2 + ID {a: 1}};                         
-        """, "successful", 32))
+    def test_234(self):
+        """Test multiple return values"""
+        input = """func swap(a int, b int) (int, int) {
+            return b, a;
+        }
+        
+        func main() {
+            var x int = swap(3, 4);
+            putIntLn(x);
+            putIntLn(y);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 234))
 
-    def test_036(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = 1 && 2 && 3 || 1 || 1;                         
-        """, "successful", 36))
+    def test_235(self):
+        """Test interface declaration"""
+        input = """type Animal interface {
+            DoSomething();
+            Speak() string;
+        }
+        
+        type Dog struct {}
+        
+        func (d Dog) Speak() string {
+            return "Woof";
+        }
+        
+        func main() {
+            var d Dog;
+            putStringLn(d.Speak());
+        }"""
+        expect = "Error on line 6 col 26: }"
+        self.assertTrue(TestParser.test(input, expect, 235))
 
-    def test_037(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = a >= 2 <= "string" > a[2][3] < ID{A: 2} >= [2]S{2};                         
-        """, "successful", 37))
+    def test_236(self):
+        """Test break statement in loop"""
+        input = """func main() {
+            for i := 0; i < 10; i += 1 {
+                if (i == 5) {
+                    break;
+                }
+                putIntLn(i);
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 236))
 
-    def test_045(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = a.a.a[2].foo(1);                         
-        """, "successful", 45))
+    def test_237(self):
+        """Test continue statement in loop"""
+        input = """func main() {
+            for i := 0; i < 10; i += 1 {
+                if (i % 2 == 0) {
+                    continue;
+                }
+                putIntLn(i);
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 237))
 
-    def test_050(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = foo().a[2].goo();                         
-        """, "successful", 50))
+    def test_238(self):
+        """Test string concatenation"""
+        input = """func main() {
+            var str string = "Hello" + " " + "World";
+            putStringLn(str);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 238))
 
-    def test_064(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            var c [2][3]ID
-        """, "successful", 64))
+    def test_239(self):
+        """Test main function with function returning boolean"""
+        input = """func isEven(num int) bool {
+            return num % 2 == 0;
+        }
+        func main() {
+            var result bool = isEven(4);
+            putBoolLn(result);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 239))
 
-    def test_067(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            const a =;
-        """, "Error on line 2 col 21: ;", 67))
+    def test_240(self):
+        """Test empty struct initialization"""
+        input = """type Point struct {
+            x int;
+            y int;
+        }
+        
+        func main() {
+            var p Point = Point{};
+            putIntLn(p.x);
+            putIntLn(p.y);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 240))
+    
+    def test_241(self):
+        """Test variable declaration and assignment"""
+        input = """func main() {
+            var x int = 10;
+            var y float = 20.5;
+            putIntLn(x);
+            putFloatLn(y);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 241))
 
-    def test_069(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            func Add(x int, y [2]int) [2]id {return ;}
-        """, "successful", 69))
+    def test_242(self):
+        """Test array declaration and access"""
+        input = """func main() {
+            var arr [3]int = [3]int{1, 2, 3};
+            putIntLn(arr[1]);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 242))
+
+    def test_243(self):
+        """Test struct initialization"""
+        input = """type Point struct {
+            x int;
+            y int;
+        }
+        
+        func main() {
+            var p Point = Point{x: 5, y: 10};
+            putIntLn(p.x);
+            putIntLn(p.y);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 243))
+
+    def test_244(self):
+        """Test function returning multiple values"""
+        input = """func swap(a int, b int) (int, int) {
+            return b, a;
+        }
+        
+        func main() {
+            var x int = swap(3, 4);
+            putIntLn(x);
+            putIntLn(y);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 244))
+
+    def test_245(self):
+        """Test if-else with logical operators"""
+        input = """func main() {
+            var x int = 10;
+            if (x > 5 && x < 15) {
+                putStringLn("Within range");
+            } else {
+                putStringLn("Out of range");
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 245))
+
+    def test_246(self):
+        """Test simple for loop"""
+        input = """func main() {
+            for i := 0; i < 3; i += 1 {
+                putIntLn(i);
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 246))
+
+    def test_247(self):
+        """Test for loop iterating an array"""
+        input = """func main() {
+            var arr [3]int = [3]int{10, 20, 30};
+            for _, value := range arr {
+                putIntLn(value);
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 247))
+
+    def test_248(self):
+        """Test method inside a struct"""
+        input = """type Calculator struct {
+            value int;
+        }
+        
+        func (c Calculator) Add(n int) int {
+            return c.value + n;
+        }
+        
+        func main() {
+            var calc Calculator = Calculator{value: 10};
+            putIntLn(calc.Add(5));
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 248))
+
+    def test_249(self):
+        """Test abc"""
+        input = """abc;"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 249))
+
+    def test_250(self):
+        """Test invalid syntax (missing semicolon)"""
+        input = """func main() {
+            var x int = 10 \n
+            putIntLn(x);
+        }"""  # Missing semicolon
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 250))
+
+    def test_251(self):
+        """Test main function with variable declaration and assignment"""
+        input = """func main() {
+            var x int;
+            x = 15;
+            putIntLn(x);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 251))
+
+    def test_252(self):
+        """Test main function with multiple variable declarations"""
+        input = """func main() {
+            var a int = 1;
+            putIntLn(a + b + c);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 252))
+
+    def test_253(self):
+        """Test main function with boolean operations"""
+        input = """func main() {
+            var flag bool = true;
+            if (flag) {
+                putStringLn("Flag is true");
+            } else {
+                putStringLn("Flag is false");
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 253))
+
+    def test_254(self):
+        """Test main function with array declaration and initialization"""
+        input = """func main() {
+            var arr [3]int = [3]int{1, 2, 3};
+            putIntLn(arr[0]);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 254))
+
+    def test_255(self):
+        """Test main function with struct declaration and usage"""
+        input = """func main() {
+            type Person struct {
+                name string;
+                age int;
+            }
+            var p Person = Person{name: "Alice", age: 30};
+            putStringLn(p.name);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 255))
+
+    def test_256(self):
+        """Test main function with function call"""
+        input = """func add(x int, y int) int {
+            return x + y;
+        }
+        func main() {
+            var result int = add(5, 10);
+            putIntLn(result);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 256))
+
+    def test_257(self):
+        """Test main function with nested if statements"""
+        input = """func main() {
+            var num int = 10;
+            if (num > 0) {
+                if (num % 2 == 0) {
+                    putStringLn("Even number");
+                } else {
+                    putStringLn("Odd number");
+                }
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 257))
+
+    def test_258(self):
+        """Test main function with for loop"""
+        input = """func main() {
+            for i := 0; i < 5; i += 1 {
+                putIntLn(i);
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 258))
+
+    def test_259(self):
+        """Test main function with break statement in loop"""
+        input = """func main() {
+            for i := 0; i < 10; i += 1 {
+                if (i == 5) {
+                    break;
+                }
+                putIntLn(i);
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 259))
+    
+    def test_260(self):
+        """Test function with no parameters and no return value"""
+        input = """func greet() {
+            putStringLn("Hello, MiniGo!");
+        }
+        
+        func main() {
+            greet();
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 260))
+
+    def test_261(self):
+        """Test function with single return value"""
+        input = """func square(n int) int {
+            return n * n;
+        }
+        
+        func main() {
+            putIntLn(square(5));
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 261))
+
+    def test_262(self):
+        """Test function with multiple parameters"""
+        input = """func add(a int, b int) int {
+            return a + b;
+        }
+        
+        func main() {
+            putIntLn(add(3, 7));
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 262))
+
+    def test_263(self):
+        """Test function returning a boolean value"""
+        input = """func isPositive(n int) boolean {
+            return n > 0;
+        }
+        
+        func main() {
+            putBoolLn(isPositive(-1));
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 263))
+
+    def test_264(self):
+        """Test nested function calls"""
+        input = """func double(n int) int {
+            return n * 2;
+        }
+        
+        func triple(n int) int {
+            return n * 3;
+        }
+        
+        func main() {
+            putIntLn(double(triple(2)));
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 264))
+
+    def test_265(self):
+        """Test struct declaration with function usage"""
+        input = """type Person struct {
+            name string;
+            age int;
+        }
+        
+        func main() {
+            var p Person = Person{name: "Alice", age: 25};
+            putStringLn(p.name);
+            putIntLn(p.age);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 265))
+
+    def test_266(self):
+        """Test while-like for loop with decrementing value"""
+        input = """func main() {
+            var i int = 5;
+            for i > 0 {
+                putIntLn(i);
+                i -= 1;
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 266))
+
+    def test_267(self):
+        """Test using continue statement inside a loop"""
+        input = """func main() {
+            for i := 1; i <= 5; i += 1 {
+                if (i == 3) {
+                    continue;
+                }
+                putIntLn(i);
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 267))
+
+    def test_268(self):
+        """Test main function with nested if statements and conditions"""
+        input = """func main() {
+            var a int = 10;
+            var b int = 20;
+            if (a < b) {
+                if (b - a > 5) {
+                    putStringLn("b is much greater than a");
+                }
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 268))
+
+    def test_269(self):
+        """Test main function with for loop and continue statement"""
+        input = """func main() {
+            for i := 0; i < 10; i += 1 {
+                if (i % 2 == 0) {
+                    continue;
+                }
+                putIntLn(i);
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 269))
+
+    def test_270(self):
+        """Test main function with array length calculation"""
+        input = """func main() {
+            var arr [5]int = [5]int{1, 2, 3, 4, 5};
+            var length int = 5;
+            putIntLn(length);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 270))
+
+    def test_271(self):
+        """Test main function with switch statement"""
+        input = """func main() {
+            var num int = 2;
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 271))
+
+    def test_272(self):
+        """Test main function with struct and method"""
+        input = """type Rectangle struct {
+            width int;
+            height int;
+        }
+        func (r Rectangle) Area() int {
+            return r.width * r.height;
+        }
+        func main() {
+            var rect Rectangle = Rectangle{width: 5, height: 10};
+            var area int = rect.Area();
+            putIntLn(area);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 272))
+
+    def test_273(self):
+        """Test main function with multiple functions"""
+        input = """func multiply(x int, y int) int {
+            return x * y;
+        }
+        func main() {
+            var result int = multiply(3, 4);
+            putIntLn(result);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 273))
+
+    def test_274(self):
+        """Test main function with compound assignment"""
+        input = """func main() {
+            var x int = 5;
+            x += 3;
+            putIntLn(x);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 274))
+
+    def test_275(self):
+        """Test main function with return statement"""
+        input = """func add(a int, b int) int {
+            return a + b;
+        }
+        func main() {
+            var sum int = add(10, 15);
+            putIntLn(sum);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 275))
+        
+    def test_276(self):
+        """Test main function with complex arithmetic operations"""
+        input = """func main() {
+            var a int = 10;
+            var b int = 5;
+            var c int = (a + b) * (a - b) / 2;
+            putIntLn(c);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 276))
+
+    def test_277(self):
+        """Test main function with multiple functions and return values"""
+        input = """func max(x int, y int) int {
+            if (x > y) {
+                return x;
+            } else {
+                return y;
+            }
+        }
+        func main() {
+            var a int = 7;
+            var b int = 14;
+            var result int = max(a, b);
+            putIntLn(result);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 277))
+
+    def test_278(self):
+        """Test main function with nested for loops"""
+        input = """func main() {
+            var sum int = 0;
+            for i := 1; i <= 3; i += 1 {
+                for j := 1; j <= 3; j += 1 {
+                    sum += i * j;
+                }
+            }
+            putIntLn(sum);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 278))
+
+    def test_279(self):
+        """Test main function with while-like structure using for loop"""
+        input = """func main() {
+            var count int = 0;
+            for count < 5 {
+                count = count + 1;
+            }
+            putIntLn(count);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 279))
+
+    def test_280(self):
+        """Test main function with struct and method that modifies fields"""
+        input = """type Circle struct {
+            radius float;
+        }
+        func (c Circle) SetRadius(r float) {
+            c.radius = r;
+        }
+        func (c Circle) Area() float {
+            return 3.14 * c.radius * c.radius;
+        }
+        func main() {
+            var c Circle;
+            c.SetRadius(5.0);
+            var area float = c.Area();
+            putFloatLn(area);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 280))
+
+    def test_281(self):
+        """Test main function with multiple variable types"""
+        input = """func main() {
+            var a int = 10;
+            var b float = 5.5;
+            var c string = "Hello";
+            putIntLn(a);
+            putFloatLn(b);
+            putStringLn(c);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 281))
+
+    def test_282(self):
+        """Test main function with complex if-else structure"""
+        input = """func main() {
+            var score int = 85;
+            if (score >= 90) {
+                putStringLn("Grade: A");
+            } else if (score >= 80) {
+                putStringLn("Grade: B");
+            } else if (score >= 70) {
+                putStringLn("Grade: C");
+            } else {
+                putStringLn("Grade: F");
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 282))
+
+    def test_283(self):
+        """Test main function with array manipulation"""
+        input = """func main() {
+            var arr [5]int = [5]int{1, 2, 3, 4, 5};
+            for i := 0; i < 5; i += 1 {
+                arr[i] = arr[i] * 2;
+                putIntLn(arr[i]);
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 283))
+
+    def test_284(self):
+        """Test main function with function that uses both parameters and return values"""
+        input = """func subtract(x int, y int) int {
+            return x - y;
+        }
+        func main() {
+            var result int = subtract(15, 5);
+            putIntLn(result);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 284))
+
+    def test_285(self):
+        """Test main function with a loop that calculates factorial"""
+        input = """func main() {
+            var n int = 5;
+            var fact int = 1;
+            for i := 1; i <= n; i += 1 {
+                fact = fact * i;
+            }
+            putIntLn(fact);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 285))
+
+    def test_286(self):
+        """Test main function with a complex struct and method interaction"""
+        input = """type Employee struct {
+            name string;
+            salary float;
+        }
+        func (e Employee) ShowDetails() {
+            putStringLn("Name: " + e.name);
+            putFloatLn(e.salary);
+        }
+        func main() {
+            var emp Employee = Employee{name: "John", salary: 50000.0};
+            emp.ShowDetails();
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 286))
+
+    def test_287(self):
+        """Test main function with calculations using floats"""
+        input = """func main() {
+            var a float = 10.5;
+            var b float = 2.5;
+            var result float = a / b;
+            putFloatLn(result);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 287))
+
+    def test_288(self):
+        """Test main function with string concatenation"""
+        input = """func main() {
+            var str1 string = "Hello";
+            var str2 string = "World";
+            var result string = str1 + " " + str2;
+            putStringLn(result);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 288))
+
+    def test_289(self):
+        """Test main function with a loop that sums even numbers"""
+        input = """func main() {
+            var sum int = 0;
+            for i := 1; i <= 10; i += 1 {
+                if (i % 2 == 0) {
+                    sum += i;
+                }
+            }
+            putIntLn(sum);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 289))
+
+    def test_290(self):
+        """Test main function with a struct and array interaction"""
+        input = """type Student struct {
+            name string;
+            grades [3]int;
+        }
+        func main() {
+            var s Student = Student{name: "Alice", grades: [3]int{90, 85, 88}};
+            putStringLn(s.name);
+            for i := 0; i < 3; i += 1 {
+                putIntLn(s.grades[i]);
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 290))
+        
+    def test_291(self):
+        """Test main function with a function that sorts an array"""
+        input = """func sort(arr [5]int) [5]int {
+            var temp int;
+            for i := 0; i < 5; i += 1 {
+                for j := i + 1; j < 5; j += 1 {
+                    if (arr[i] > arr[j]) {
+                        temp = arr[i];
+                        arr[i] = arr[j];
+                        arr[j] = temp;
+                    }
+                }
+            }
+            return arr;
+        }
+        func main() {
+            var nums [5]int = [5]int{5, 3, 4, 1, 2};
+            var sorted [5]int = sort(nums);
+            for i := 0; i < 5; i += 1 {
+                putIntLn(sorted[i]);
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 291))
+
+    def test_292(self):
+        """Test main function with a struct and method to calculate average grades"""
+        input = """type Student struct {
+            name string;
+            grades [5]int;
+        }
+        func (s Student) Average() float {
+            var total int = 0;
+            for i := 0; i < 5; i += 1 {
+                total += s.grades[i];
+            }
+            return to_float(total) / 5.0;
+        }
+        func main() {
+            var s Student = Student{name: "Bob", grades: [5]int{90, 85, 78, 92, 88}};
+            var avg float = s.Average();
+            putFloatLn(avg);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 292))
+
+    def test_293(self):
+        """Test main function with a function that finds the maximum in an array"""
+        input = """func findMax(arr [5]int) int {
+            var max int = arr[0];
+            for i := 1; i < 5; i += 1 {
+                if (arr[i] > max) {
+                    max = arr[i];
+                }
+            }
+            return max;
+        }
+        func main() {
+            var nums [5]int = [5]int{10, 20, 5, 30, 15};
+            var maxValue int = findMax(nums);
+            putIntLn(maxValue);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 293))
+
+    def test_294(self):
+        """Test main function with multiple structs and interaction"""
+        input = """type Point struct {
+            x int;
+            y int;
+        }
+        type Rectangle struct {
+            topLeft Point;
+            bottomRight Point;
+        }
+        func (r Rectangle) Area() int {
+            var width int = r.bottomRight.x - r.topLeft.x;
+            var height int = r.bottomRight.y - r.topLeft.y;
+            return width * height;
+        }
+        func main() {
+            var rect Rectangle = Rectangle{topLeft: Point{x: 1, y: 5}, bottomRight: Point{x: 4, y: 1}};
+            var area int = rect.Area();
+            putIntLn(area);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 294))
+
+    def test_295(self):
+        """Test main function with complex conditions and multiple variables"""
+        input = """func main() {
+            var a int = 3;
+            var b int = 10;
+            var c int = 7;
+            if (a < b && b > c) {
+                if (c > a) {
+                    putStringLn("c is the largest among a, b, and c");
+                }
+            } else {
+                putStringLn("b is not the largest");
+            }
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 295))
+
+    def test_296(self):
+        """Test main function with a complex function that processes structs"""
+        input = """type Employee struct {
+            name string;
+            salary float;
+        }
+        func increaseSalary(emp Employee, percent float) Employee {
+            emp.salary += emp.salary * (percent / 100.0);
+            return emp;
+        }
+        func main() {
+            var emp Employee = Employee{name: "Alice", salary: 50000.0};
+            emp = increaseSalary(emp, 10);
+            putFloatLn(emp.salary);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 296))
+
+    def test_297(self):
+        """Test main function with character array and string manipulation"""
+        input = """func main() {
+            var chars [5]rune = [5]rune{\"H\", \"e\", \"l\", \"l\", \"o\"};
+            var str string = "";
+            for i := 0; i < 5; i += 1 {
+                str += to_string(chars[i]);
+            }
+            putStringLn(str);
+        }"""
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 297))
+
+    def test_298(self):
+        """Test main function with a loop that counts down"""
+        input = """func main() {
+            var count int = 10;
+            for count > 0 {
+                putIntLn(count);
+                count = count - 1;
+            }
+            putStringLn("Countdown complete!");
+        }
+        """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 298))
+
+    def test_299(self):
+        """Test main function with a combination of functions and structs"""
+        input = """type Car struct {
+            model string;
+            year int;
+        }
+        func (c Car) Info() string {
+            return c.model + " (" + to_string(c.year) + ")";
+        }
+        func main() {
+            var myCar Car = Car{model: "Toyota", year: 2021};
+            var info string = myCar.Info();
+            putStringLn(info);
+        }
+        """
+        expect = "successful"
+        self.assertTrue(TestParser.test(input, expect, 299))

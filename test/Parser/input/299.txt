@@ -10,3 +10,4 @@ type Car struct {
             var info string = myCar.Info();
             putStringLn(info);
         }
+        
