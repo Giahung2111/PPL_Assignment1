@@ -1,3 +1,2 @@
-"hello world" 
- putInt( x + y ) ; 
- getString ( ) ;
+
+            0x1

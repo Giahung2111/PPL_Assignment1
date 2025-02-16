@@ -1,1 +1,0 @@
-func,main,(,),{,var,count,int,=,10,;,for,count,>,0,{,putIntLn,(,count,),;,count,=,count,-,1,;,},;,putStringLn,(,"Countdown complete!",),;,},<EOF>

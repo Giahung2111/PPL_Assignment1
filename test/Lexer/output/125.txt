@@ -1,1 +1,0 @@
-var,a,int,=,10,;,var,b,float,=,20.5,;,var,c,string,=,"Hello, MiniGo!",;,var,d,boolean,=,true,;,<EOF>

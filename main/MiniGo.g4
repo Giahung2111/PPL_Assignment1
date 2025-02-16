@@ -103,7 +103,7 @@ ID: [a-zA-Z_][a-zA-Z0-9_]*;
 // TODO Literal 
 
 
-DECIMAL_LIT: (MINUS | ) ('0' | [1-9] [0-9]*) ;
+DECIMAL_LIT: ('0' | [1-9] [0-9]*) ;
 BINARY_LIT: '0' [bB] BIN_DIGIT+ ;
 OCT_LIT: '0' [oO] OCTAL_DIGIT+ ;
 HEXA_LIT: '0' [xX] HEX_DIGIT+;
@@ -112,8 +112,8 @@ fragment OCTAL_DIGIT: [0-7];
 fragment BIN_DIGIT: [01];
 
 
-fragment EXP: [eE] [+-]? ('0' | [1-9] [0-9]*);
-FLOAT_LIT: [0-9]* '.' [0-9]* EXP? | '.' [0-9]+ EXP? | [0-9]+ EXP;
+fragment EXP: [eE] [+-]? [0-9]+;
+FLOAT_LIT: [0-9]+ '.' [0-9]* EXP? | '.' [0-9]+ EXP? | [0-9]+ EXP;
 fragment DECIMALS: ('0' | [1-9] [0-9]*) ;
 
 STRING_LIT: '"' (~["\\\n] | '\\' [ntr"\\] | '\'"')* '"';
@@ -123,12 +123,12 @@ NIL_LIT: 'nil';
 // TODO SKIP
 SINGLE_LINE_COMMENT: '//' ~[\r\n]* -> skip;
 MULTI_LINE_COMMENT: '/*' (MULTI_LINE_COMMENT | .)*? '*/' -> skip;
-WS: [ \t\f]+ -> skip;
+WS: [ \t\f\r]+ -> skip;
 SEMICOLON_NEWLINE:
     '\r'? '\n' {
-    if self.preType in {self.ID, self.DECIMAL_LIT, self.TRUE,self.FALSE, self.STRING_LIT, self.FLOAT_LIT, 
+    if self.preType in {self.ID, self.DECIMAL_LIT, self.BINARY_LIT, self.OCT_LIT, self.HEXA_LIT, self.TRUE,self.FALSE, self.STRING_LIT, self.FLOAT_LIT, 
                 self.RETURN, self.CONTINUE, self.BREAK,
-                self.RPAREN, self.RBRACK, self.RBRACE }:
+                self.RPAREN, self.RBRACK, self.RBRACE, self.NIL }:
         self.text = ';'
     else:
         self.skip()
@@ -153,7 +153,7 @@ ILLEGAL_ESCAPE: '"' (~["\\\n] | '\\' [ntr"\\] | '\'"')* '\\' ~[rnt'\\]
     VAL_ESCAPES = ['n', 't', 'r', '"', '\\']
     for i in range(1, len(self.text)-1):
         if self.text[i] == '\\' and self.text[i+1] not in VAL_ESCAPES:
-            raise IllegalEscape(self.text[0:i+2])
+            raise IllegalEscape(self.text[0:])
 };
 
 //!  -------------------------- end Lexical structure ------------------- //
@@ -231,7 +231,7 @@ method_call: expression DOT expression;
 
 // // // DECLARED
 // 5.1 Variables -- checked --
-variables: VAR expression (typ ASSIGN expression | ASSIGN  expression  | typ);
+variables: VAR ID (typ ASSIGN expression | ASSIGN  expression  | typ);
 
 // 5.2 Constants
 constants: CONST ID ASSIGN expression;

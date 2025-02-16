@@ -1,2 +1,2 @@
- "valid string" "invalid string 
-            
+
+            nil

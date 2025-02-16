@@ -1,1 +1,1 @@
-"valid string",Unclosed string: "invalid string 
+nil,;,<EOF>

@@ -1,1 +1,1 @@
-return,0,;,<EOF>
+0x11,<EOF>

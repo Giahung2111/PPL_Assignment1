@@ -72,7 +72,7 @@ class NewErrorListener(ConsoleErrorListener):
 
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
         raise SyntaxException("Error on line " + str(line) +
-                              " col " + str(int(str(column)) + 1) + ": " + offendingSymbol.text)
+                              " col " + str(column) + ": " + offendingSymbol.text)
 
 NewErrorListener.INSTANCE = NewErrorListener()
 

@@ -1,1 +1,1 @@
-0x12,;,0x123,GH,;,<EOF>
+"12",Unclosed string: "

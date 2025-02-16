@@ -242,14 +242,14 @@ def serializedATN():
         buf.write("\2\u01da\u01db\5\24\13\2\u01db\u01dc\7\62\2\2\u01dcQ\3")
         buf.write("\2\2\2\u01dd\u01de\5@!\2\u01de\u01df\7\60\2\2\u01df\u01e0")
         buf.write("\5@!\2\u01e0S\3\2\2\2\u01e1\u01e2\7\22\2\2\u01e2\u01ea")
-        buf.write("\5@!\2\u01e3\u01e4\5\22\n\2\u01e4\u01e5\7/\2\2\u01e5\u01e6")
-        buf.write("\5@!\2\u01e6\u01eb\3\2\2\2\u01e7\u01e8\7/\2\2\u01e8\u01eb")
-        buf.write("\5@!\2\u01e9\u01eb\5\22\n\2\u01ea\u01e3\3\2\2\2\u01ea")
-        buf.write("\u01e7\3\2\2\2\u01ea\u01e9\3\2\2\2\u01ebU\3\2\2\2\u01ec")
-        buf.write("\u01ed\7\21\2\2\u01ed\u01ee\79\2\2\u01ee\u01ef\7/\2\2")
-        buf.write("\u01ef\u01f0\5@!\2\u01f0W\3\2\2\2\u01f1\u01f2\5\22\n\2")
-        buf.write("\u01f2\u01f3\7\67\2\2\u01f3\u01f4\5X-\2\u01f4\u01f7\3")
-        buf.write("\2\2\2\u01f5\u01f7\5\22\n\2\u01f6\u01f1\3\2\2\2\u01f6")
+        buf.write("\79\2\2\u01e3\u01e4\5\22\n\2\u01e4\u01e5\7/\2\2\u01e5")
+        buf.write("\u01e6\5@!\2\u01e6\u01eb\3\2\2\2\u01e7\u01e8\7/\2\2\u01e8")
+        buf.write("\u01eb\5@!\2\u01e9\u01eb\5\22\n\2\u01ea\u01e3\3\2\2\2")
+        buf.write("\u01ea\u01e7\3\2\2\2\u01ea\u01e9\3\2\2\2\u01ebU\3\2\2")
+        buf.write("\2\u01ec\u01ed\7\21\2\2\u01ed\u01ee\79\2\2\u01ee\u01ef")
+        buf.write("\7/\2\2\u01ef\u01f0\5@!\2\u01f0W\3\2\2\2\u01f1\u01f2\5")
+        buf.write("\22\n\2\u01f2\u01f3\7\67\2\2\u01f3\u01f4\5X-\2\u01f4\u01f7")
+        buf.write("\3\2\2\2\u01f5\u01f7\5\22\n\2\u01f6\u01f1\3\2\2\2\u01f6")
         buf.write("\u01f5\3\2\2\2\u01f7\u0203\3\2\2\2\u01f8\u01fe\7\61\2")
         buf.write("\2\u01f9\u01fa\5\22\n\2\u01fa\u01fb\7\67\2\2\u01fb\u01fc")
         buf.write("\5X-\2\u01fc\u01ff\3\2\2\2\u01fd\u01ff\5\22\n\2\u01fe")
@@ -3690,12 +3690,8 @@ class MiniGoParser ( Parser ):
         def VAR(self):
             return self.getToken(MiniGoParser.VAR, 0)
 
-        def expression(self, i:int=None):
-            if i is None:
-                return self.getTypedRuleContexts(MiniGoParser.ExpressionContext)
-            else:
-                return self.getTypedRuleContext(MiniGoParser.ExpressionContext,i)
-
+        def ID(self):
+            return self.getToken(MiniGoParser.ID, 0)
 
         def typ(self):
             return self.getTypedRuleContext(MiniGoParser.TypContext,0)
@@ -3703,6 +3699,10 @@ class MiniGoParser ( Parser ):
 
         def ASSIGN(self):
             return self.getToken(MiniGoParser.ASSIGN, 0)
+
+        def expression(self):
+            return self.getTypedRuleContext(MiniGoParser.ExpressionContext,0)
+
 
         def getRuleIndex(self):
             return MiniGoParser.RULE_variables
@@ -3725,7 +3725,7 @@ class MiniGoParser ( Parser ):
             self.state = 479
             self.match(MiniGoParser.VAR)
             self.state = 480
-            self.expression(0)
+            self.match(MiniGoParser.ID)
             self.state = 488
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,35,self._ctx)

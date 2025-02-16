@@ -1,7 +1,5 @@
 
-            putStringLn( "Hello, world!" );
-            putIntLn(x + y) ;
-            func invalidFunc( ) { return ; }
-            for (int i = 0 ; i < 10 ; i += 1 ) {
-                // missing initialization
+            if
             }
+            ]
+            )

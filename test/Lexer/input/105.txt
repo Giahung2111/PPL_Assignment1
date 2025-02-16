@@ -1,8 +1,2 @@
 
-            var x int ;
-            const y float = 3.14 ;
-            func add(a int, b int) int {
-                return a + b ;
-            }
-            x = y + 10
-            
+            2.

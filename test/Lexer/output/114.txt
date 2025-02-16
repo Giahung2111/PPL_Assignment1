@@ -1,1 +1,1 @@
-ErrorToken @
+nil,;,<EOF>

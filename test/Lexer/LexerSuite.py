@@ -1,926 +1,558 @@
+"""
+ * Initial code for Assignment 1, 2
+ * Programming Language Principles
+ * Author: Võ Tiến
+ * Link FB : https://www.facebook.com/Shiba.Vo.Tien
+ * Link Group : https://www.facebook.com/groups/khmt.ktmt.cse.bku
+ * Date: 07.01.2025
+"""
 import unittest
 from TestUtils import TestLexer
 
 class LexerSuite(unittest.TestCase):
-    
-    def test_001(self):
-        self.assertTrue(TestLexer.test("var x int;", "var,x,int,;,<EOF>", 1))
 
+    def test_001(self):
+        """Keywords"""
+        self.assertTrue(TestLexer.test("if","if,<EOF>", 1))
 
     def test_002(self):
-        self.assertTrue(TestLexer.test("func main() {}", "func,main,(,),{,},<EOF>", 2))
-
-
+        """Operators"""
+        self.assertTrue(TestLexer.test("+","+,<EOF>", 2))
+        
     def test_003(self):
-        self.assertTrue(TestLexer.test("if x == 10 {}", "if,x,==,10,{,},<EOF>", 3))
-
-
+        """Separators"""
+        self.assertTrue(TestLexer.test("[]","[,],<EOF>", 3))
+        
     def test_004(self):
-        self.assertTrue(TestLexer.test("else {}", "else,{,},<EOF>", 4))
-
-
+        """Identifiers"""
+        self.assertTrue(TestLexer.test("_VOTien","_VOTien,<EOF>", 4))
+        
     def test_005(self):
-        self.assertTrue(TestLexer.test("for i = 0; i < 10; i++ {}", "for,i,=,0,;,i,<,10,;,i,+,+,{,},<EOF>", 5))
-
-
+        """Literals INT"""
+        self.assertTrue(TestLexer.test("12","12,<EOF>", 5))
+        
     def test_006(self):
-        self.assertTrue(TestLexer.test("return 0;", "return,0,;,<EOF>", 6))
-       
-    # Test operator
+        """Literals INT 16*1 + 1 = 17"""
+        self.assertTrue(TestLexer.test("0x11","0x11,<EOF>", 6))
+    
     def test_007(self):
-        self.assertTrue(TestLexer.test("true && false", "true,&&,false,<EOF>", 7))
-
-
+        """Literals FLOAT"""
+        self.assertTrue(TestLexer.test("12.e-8","12.e-8,<EOF>", 7))
+    
     def test_008(self):
-        self.assertTrue(TestLexer.test("x += 1;", "x,+=,1,;,<EOF>", 8))
-
-
+        """Literals String"""
+        self.assertTrue(TestLexer.test(""" "VOTIEN \\r" ""","\"VOTIEN \\r\",<EOF>", 8))
+        
     def test_009(self):
-        self.assertTrue(TestLexer.test("y -= 2;", "y,-=,2,;,<EOF>", 9))
-
+        """COMEMENTS"""
+        self.assertTrue(TestLexer.test("// VOTIEN","<EOF>", 9))
 
     def test_010(self):
-        self.assertTrue(TestLexer.test("z *= 3;", "z,*=,3,;,<EOF>", 10))
-
+        """COMEMENTS"""
+        self.assertTrue(TestLexer.test("/* VO /* /*TIEN*/ */ SHIBA","SHIBA,<EOF>", 10))
 
     def test_011(self):
-        self.assertTrue(TestLexer.test("w /= 4;", "w,/=,4,;,<EOF>", 11))
-
+        """ERROR_CHAR"""
+        self.assertTrue(TestLexer.test("^","ErrorToken ^", 11))
 
     def test_012(self):
-        self.assertTrue(TestLexer.test("a %= 5;", "a,%=,5,;,<EOF>", 12))
-
-
+        """UNCLOSE_STRING"""
+        self.assertTrue(TestLexer.test(""" "VOTIEN\n" ""","Unclosed string: \"VOTIEN", 12))
+    
     def test_013(self):
-        self.assertTrue(TestLexer.test("x && y || z", "x,&&,y,||,z,<EOF>", 13))
-
-
+        """ILLEGAL_ESCAPE"""
+        self.assertTrue(TestLexer.test(""" "VOTIEN\\f" ""","Illegal escape in string: \"VOTIEN\\f", 13))
+        
     def test_014(self):
-        self.assertTrue(TestLexer.test("!x", "!,x,<EOF>", 14))
-
+        """Keywords"""
+        self.assertTrue(TestLexer.test("else for return func type struct interface string int float boolean const var continue break range nil true false", "else,for,return,func,type,struct,interface,string,int,float,boolean,const,var,continue,break,range,nil,true,false,<EOF>", 14))
 
     def test_015(self):
-        self.assertTrue(TestLexer.test("x == y", "x,==,y,<EOF>", 15))
-
+        """Operators"""
+        self.assertTrue(TestLexer.test("+ - * / % == != > < <= >= && || ! = += -= *= /= %= :=", "+,-,*,/,%,==,!=,>,<,<=,>=,&&,||,!,=,+=,-=,*=,/=,%=,:=,<EOF>", 15))
 
     def test_016(self):
-        self.assertTrue(TestLexer.test("x != y", "x,!=,y,<EOF>", 16))
-
+        """Separators"""
+        self.assertTrue(TestLexer.test("{}[](),;", "{,},[,],(,),,,;,<EOF>", 16))
 
     def test_017(self):
-        self.assertTrue(TestLexer.test("x < y", "x,<,y,<EOF>", 17))
-
+        """skip"""
+        self.assertTrue(TestLexer.test("\t\f\r ", "<EOF>", 17))
 
     def test_018(self):
-        self.assertTrue(TestLexer.test("x <= y", "x,<=,y,<EOF>", 18))
-
+        """skip"""
+        self.assertTrue(TestLexer.test("// tesst //", "<EOF>", 18))
 
     def test_019(self):
-        self.assertTrue(TestLexer.test("x > y", "x,>,y,<EOF>", 19))
-
+        """skip"""
+        self.assertTrue(TestLexer.test(""" /*
+        /* a */ /* b */ 
+        // 321231
+        */ if /* */ /* */""", "if,<EOF>", 19))
 
     def test_020(self):
-        self.assertTrue(TestLexer.test("x >= y", "x,>=,y,<EOF>", 20))
-
+        """skip"""
+        self.assertTrue(TestLexer.test(""" /*
+        /* a /* b /* b */  */  */ 
+        */""", "<EOF>", 20))
 
     def test_021(self):
-        self.assertTrue(TestLexer.test("x = y", "x,=,y,<EOF>", 21))
-
+        """skip"""
+        self.assertTrue(TestLexer.test(""" /* //123312
+        /* a /* b /* b */  */  */ 
+        */""", "<EOF>", 21))
 
     def test_022(self):
-        self.assertTrue(TestLexer.test("x + y", "x,+,y,<EOF>", 22))
-
+        """skip"""
+        self.assertTrue(TestLexer.test("/*", "/,*,<EOF>", 22))
 
     def test_023(self):
-        self.assertTrue(TestLexer.test("x - y", "x,-,y,<EOF>", 23))
-
+        """skip"""
+        self.assertTrue(TestLexer.test("/**///", "<EOF>", 23))
 
     def test_024(self):
-        self.assertTrue(TestLexer.test("x * y", "x,*,y,<EOF>", 24))
-
+        """Identifiers"""
+        self.assertTrue(TestLexer.test("2_bA", "2,_bA,<EOF>", 24))
 
     def test_025(self):
-        self.assertTrue(TestLexer.test("x / y", "x,/,y,<EOF>", 25))
-
+        """Identifiers"""
+        self.assertTrue(TestLexer.test("_", "_,<EOF>", 25))
 
     def test_026(self):
-        self.assertTrue(TestLexer.test("x % y", "x,%,y,<EOF>", 26))
-
+        """Identifiers"""
+        self.assertTrue(TestLexer.test("2b", "2,b,<EOF>", 26))
 
     def test_027(self):
-        self.assertTrue(TestLexer.test("x.y", "x,.,y,<EOF>", 27))
-       
-    # Test array
-    def test_028(self):
-        self.assertTrue(TestLexer.test("x[0]", "x,[,0,],<EOF>", 28))
+        """Identifiers"""
+        self.assertTrue(TestLexer.test("A_2b_3", "A_2b_3,<EOF>", 27))
 
+    def test_028(self):
+        """Identifiers"""
+        self.assertTrue(TestLexer.test("_a__", "_a__,<EOF>", 28))
 
     def test_029(self):
-        self.assertTrue(TestLexer.test("x[0][1]", "x,[,0,],[,1,],<EOF>", 29))
-
+        """Identifiers"""
+        self.assertTrue(TestLexer.test("u_2_bB", "u_2_bB,<EOF>", 29))
 
     def test_030(self):
-        self.assertTrue(TestLexer.test("x[0].y", "x,[,0,],.,y,<EOF>", 30))
-
+        """INT_LIT"""
+        self.assertTrue(TestLexer.test("0452.", "0452.,<EOF>", 30))
 
     def test_031(self):
-        self.assertTrue(TestLexer.test("x[0].y[1]", "x,[,0,],.,y,[,1,],<EOF>", 31))
-       
-
+        """INT_LIT"""
+        self.assertTrue(TestLexer.test("-0120", "-,0,120,<EOF>", 31))
 
     def test_032(self):
-        self.assertTrue(TestLexer.test("x[0].y[1].z", "x,[,0,],.,y,[,1,],.,z,<EOF>", 32))
-
+        """INT_LIT"""
+        self.assertTrue(TestLexer.test("012", "0,12,<EOF>", 32))
 
     def test_033(self):
-        self.assertTrue(TestLexer.test("x[0].y[1].z[2]", "x,[,0,],.,y,[,1,],.,z,[,2,],<EOF>", 33))
-
+        """INT_LIT"""
+        self.assertTrue(TestLexer.test("1_2", "1,_2,<EOF>", 33))
 
     def test_034(self):
-        self.assertTrue(TestLexer.test("x[0].y[1].z[2].w", "x,[,0,],.,y,[,1,],.,z,[,2,],.,w,<EOF>", 34))
-       
-    def test_035(self):
-        """Keywords"""
-        self.assertTrue(TestLexer.test("if","if,<EOF>", 35))
+        """INT_LIT"""
+        self.assertTrue(TestLexer.test("12", "12,<EOF>", 34))
 
+    def test_035(self):
+        """INT_LIT"""
+        self.assertTrue(TestLexer.test("-12", "-,12,<EOF>", 35))
 
     def test_036(self):
-        """Operators"""
-        self.assertTrue(TestLexer.test("+","+,<EOF>", 36))
-       
-    def test_037(self):
-        """Separators"""
-        self.assertTrue(TestLexer.test("[]","[,],<EOF>", 37))
-       
-    def test_038(self):
-        """Identifiers"""
-        self.assertTrue(TestLexer.test("_VOTien","_VOTien,<EOF>", 38))
-       
-    def test_039(self):
-        """Literals INT"""
-        self.assertTrue(TestLexer.test("12","12,<EOF>", 39))
-       
-    def test_040(self):
-        """Literals INT 16*1 + 1 = 17"""
-        self.assertTrue(TestLexer.test("0x11","0x11,<EOF>", 40))
-   
-    def test_041(self):
-        """Literals FLOAT"""
-        self.assertTrue(TestLexer.test("12.e-8","12.e-8,<EOF>", 41))
-   
-    def test_042(self):
-        """Literals String"""
-        self.assertTrue(TestLexer.test(""" "VOTIEN \\r" ""","\"VOTIEN \\r\",<EOF>", 42))
-       
-    def test_043(self):
-        """COMEMENTS"""
-        self.assertTrue(TestLexer.test("// VOTIEN","<EOF>", 43))
+        """INT_LIT"""
+        self.assertTrue(TestLexer.test("0b000", "0b000,<EOF>", 36))
 
+    def test_037(self):
+        """INT_LIT"""
+        self.assertTrue(TestLexer.test("0b1e", "0b1,e,<EOF>", 37))
+
+    def test_038(self):
+        """INT_LIT"""
+        self.assertTrue(TestLexer.test("0b12", "0b1,2,<EOF>", 38))
+
+    def test_039(self):
+        """INT_LIT"""
+        self.assertTrue(TestLexer.test("0b1101", "0b1101,<EOF>", 39))
+
+    def test_040(self):
+        """INT_LIT"""
+        self.assertTrue(TestLexer.test("0B111", "0B111,<EOF>", 40))
+
+    def test_041(self):
+        """INT_LIT"""
+        self.assertTrue(TestLexer.test("00O72", "0,0O72,<EOF>", 41))
+
+    def test_042(self):
+        """INT_LIT"""
+        self.assertTrue(TestLexer.test("-0O72", "-,0O72,<EOF>", 42))
+
+    def test_043(self):
+        """INT_LIT"""
+        self.assertTrue(TestLexer.test("0o18", "0o1,8,<EOF>", 43))
 
     def test_044(self):
-        """COMEMENTS"""
-        self.assertTrue(TestLexer.test("/* VO /* /*TIEN*/ */ SHIBA","SHIBA,<EOF>", 44))
-
+        """INT_LIT"""
+        self.assertTrue(TestLexer.test("0o12", "0o12,<EOF>", 44))
 
     def test_045(self):
-        """ERROR_CHAR"""
-        self.assertTrue(TestLexer.test("^","ErrorToken ^", 45))
-
+        """INT_LIT"""
+        self.assertTrue(TestLexer.test("0Oo1", "0,Oo1,<EOF>", 45))
 
     def test_046(self):
-        """UNCLOSE_STRING"""
-        self.assertTrue(TestLexer.test(""" "VOTIEN\n" ""","Unclosed string: \"VOTIEN", 46))
-   
+        """INT_LIT"""
+        self.assertTrue(TestLexer.test("-0x2g", "-,0x2,g,<EOF>", 46))
+
     def test_047(self):
-        """ILLEGAL_ESCAPE"""
-        self.assertTrue(TestLexer.test(""" "VOTIEN\\f" ""","Illegal escape in string: \"VOTIEN\\f", 47))
+        """INT_LIT"""
+        self.assertTrue(TestLexer.test("0X0cb", "0X0cb,<EOF>", 47))
 
-
-   
     def test_048(self):
-        """ILLEGAL_ESCAPE"""
-        self.assertTrue(TestLexer.test("""
-            const a = 2;
-        ""","const,a,=,2,;,<EOF>", 48))
+        """INT_LIT"""
+        self.assertTrue(TestLexer.test("0xae2", "0xae2,<EOF>", 48))
 
     def test_049(self):
-        """skip"""
-        self.assertTrue(TestLexer.test("\t\f\r ", "<EOF>", 49))
-    
+        """INT_LIT"""
+        self.assertTrue(TestLexer.test("0Xx2", "0,Xx2,<EOF>", 49))
+
     def test_050(self):
-        """INT_LIT"""
-        self.assertTrue(TestLexer.test("045", "0,45,<EOF>", 50))
-    
+        """FLOAT_LIT"""
+        self.assertTrue(TestLexer.test("010.010e-020", "010.010e-020,<EOF>", 50))
+
     def test_051(self):
-        """INT_LIT"""
-        self.assertTrue(TestLexer.test("1_2", "1,_2,<EOF>", 51))
-    
+        """FLOAT_LIT"""
+        self.assertTrue(TestLexer.test("1.2e+-2", "1.2,e,+,-,2,<EOF>", 51))
+
     def test_052(self):
-        """INT_LIT"""
-        self.assertTrue(TestLexer.test("0b000", "0b000,<EOF>", 52))
+        """FLOAT_LIT"""
+        self.assertTrue(TestLexer.test("1.2Ee2", "1.2,Ee2,<EOF>", 52))
 
     def test_053(self):
         """FLOAT_LIT"""
-        self.assertTrue(TestLexer.test("010.010e-020", "010.010e-020,<EOF>", 53))
+        self.assertTrue(TestLexer.test("09.e-002", "09.e-002,<EOF>", 53))
 
     def test_054(self):
-        """INT_LIT"""
-        self.assertTrue(TestLexer.test("045.00", "045.00,<EOF>", 54))
-    
+        """FLOAT_LIT"""
+        self.assertTrue(TestLexer.test("1.e-2", "1.e-2,<EOF>", 54))
+
     def test_055(self):
-        self.assertTrue(TestLexer.test("const Votien = [5][0]string{1, \"string\"}", "const,Votien,=,[,5,],[,0,],string,{,1,,,\"string\",},<EOF>", 55))
- 
+        """FLOAT_LIT"""
+        self.assertTrue(TestLexer.test("1.e2", "1.e2,<EOF>", 55))
+
+    def test_056(self):
+        """FLOAT_LIT"""
+        self.assertTrue(TestLexer.test("1.e", "1.,e,<EOF>", 56))
+
+    def test_057(self):
+        """FLOAT_LIT"""
+        self.assertTrue(TestLexer.test("1.", "1.,<EOF>", 57))
+
+    def test_058(self):
+        """FLOAT_LIT"""
+        self.assertTrue(TestLexer.test("00.1e2", "00.1e2,<EOF>", 58))
+
+    def test_059(self):
+        """FLOAT_LIT"""
+        self.assertTrue(TestLexer.test(".e+2", ".,e,+,2,<EOF>", 59))
+
+    def test_060(self):
+        """STRING_LIT"""
+        self.assertTrue(TestLexer.test("if", "if,<EOF>", 60))
+
+    def test_061(self):
+        """STRING_LIT"""
+        self.assertTrue(TestLexer.test(""" "votien" """, "\"votien\",<EOF>", 61))
+
+    def test_062(self):
+        """STRING_LIT"""
+        self.assertTrue(TestLexer.test(""" "\\r" """, "\"\\r\",<EOF>", 62))
+
+    def test_063(self):
+        """STRING_LIT"""
+        self.assertTrue(TestLexer.test(""" "\\n" """, "\"\\n\",<EOF>", 63))
+
+    def test_064(self):
+        """STRING_LIT"""
+        self.assertTrue(TestLexer.test(""" "\\\\" """, "\"\\\\\",<EOF>", 64))
+
+    def test_065(self):
+        """STRING_LIT"""
+        self.assertTrue(TestLexer.test(""" "\\"" """, "\"\\\"\",<EOF>", 65))
+
+    def test_066(self):
+        """STRING_LIT"""
+        self.assertTrue(TestLexer.test(""" "a \\r a" """, "\"a \\r a\",<EOF>", 66))
+
+    def test_067(self):
+        """STRING_LIT"""
+        self.assertTrue(TestLexer.test(""" "\\r \\r \\r" """, "\"\\r \\r \\r\",<EOF>", 67))
+
+    def test_068(self):
+        """Keywords"""
+        self.assertTrue(TestLexer.test(""" "" """, "\"\",<EOF>", 68))
+
+    def test_069(self):
+        """Keywords"""
+        self.assertTrue(TestLexer.test(""" ^ """, "ErrorToken ^", 69))
+
+    def test_070(self):
+        """Keywords"""
+        self.assertTrue(TestLexer.test(""" /* @@ * */ """, "<EOF>", 70))
+
+    def test_071(self):
+        """Keywords"""
+        self.assertTrue(TestLexer.test(""" 
+        /* a * */
+        """, "<EOF>", 71))
+
+    def test_072(self):
+        """Keywords"""
+        self.assertTrue(TestLexer.test(""" // /* */  """, "<EOF>", 72))
+
+    def test_073(self):
+        """Keywords"""
+        self.assertTrue(TestLexer.test(""" // /*
+                                       */""", "*,/,<EOF>", 73))
+
+    def test_074(self):
+        """COMMENT"""
+        self.assertTrue(TestLexer.test(""" 
+        /* */ /* */ /*a // */ b""", "b,<EOF>", 74))
+
+    def test_075(self):
+        """COMMENT"""
+        self.assertTrue(TestLexer.test(""" /* a */ */ b """, "*,/,b,<EOF>", 75))
+
+    def test_076(self):
+        """COMMENT"""
+        self.assertTrue(TestLexer.test(""" /* /* */ a """, "a,<EOF>", 76))
+
+    def test_077(self):
+        """COMMENT"""
+        self.assertTrue(TestLexer.test(""" /* a /* b */ */ c /* */""", "c,<EOF>", 77))
+
+    def test_078(self):
+        """COMMENT"""
+        self.assertTrue(TestLexer.test(""" /* test */ a /* */ """, "a,<EOF>", 78))
+
+    def test_079(self):
+        """COMMENT"""
+        self.assertTrue(TestLexer.test("""
+        /* test
+        */ a /* */
+""", "a,;,<EOF>", 79))
+
+    def test_080(self):
+        """COMMENT"""
+        self.assertTrue(TestLexer.test(""" 
+    // // //
+ """, "<EOF>", 80))
+
+    def test_081(self):
+        """COMMENT"""
+        self.assertTrue(TestLexer.test("""
+// // // """, "<EOF>", 81))
+
+    def test_082(self):
+        """COMMENT"""
+        self.assertTrue(TestLexer.test(""" // // // """, "<EOF>", 82))
+
+    def test_083(self):
+        """BOOL_LIT"""
+        self.assertTrue(TestLexer.test("true", "true,<EOF>", 83))
+
+    def test_084(self):
+        """BOOL_LIT"""
+        self.assertTrue(TestLexer.test("false", "false,<EOF>", 84))
+
+    def test_085(self):
+        """NIL_LIT"""
+        self.assertTrue(TestLexer.test("nil", "nil,<EOF>", 85))
+
+    def test_086(self):
+        """ERROR_CHAR"""
+        self.assertTrue(TestLexer.test("?", "ErrorToken ?", 86))
+
+    def test_087(self):
+        """ERROR_CHAR"""
+        self.assertTrue(TestLexer.test("@", "ErrorToken @", 87))
+
+    def test_088(self):
+        """ERROR_CHAR"""
+        self.assertTrue(TestLexer.test("#", "ErrorToken #", 88))
+
+    def test_089(self):
+        """ERROR_CHAR"""
+        self.assertTrue(TestLexer.test("\\", "ErrorToken \\", 89))
+
+    def test_090(self):
+        """ERROR_CHAR"""
+        self.assertTrue(TestLexer.test("&", "ErrorToken &", 90))
+
+    def test_091(self):
+        """UNCLOSE_STRING"""
+        self.assertTrue(TestLexer.test(""" 123" """, "123,Unclosed string: \" ", 91))
+
+    def test_092(self):
+        """UNCLOSE_STRING"""
+        self.assertTrue(TestLexer.test(""" "123""", "Unclosed string: \"123", 92))
+
+    def test_093(self):
+        """UNCLOSE_STRING"""
+        self.assertTrue(TestLexer.test(""" "123 \\n \n" """, "Unclosed string: \"123 \\n ", 93))
+
+    def test_094(self):
+        """UNCLOSE_STRING"""
+        self.assertTrue(TestLexer.test(""" "123
+        " """, "Unclosed string: \"123", 94))
+
+    def test_095(self):
+        """UNCLOSE_STRING"""
+        self.assertTrue(TestLexer.test(""" "123\n" """, "Unclosed string: \"123", 95))
+
+    def test_096(self):
+        """ILLEGAL_ESCAPE"""
+        self.assertTrue(TestLexer.test(""" "\\" \\\\ \\q" """, "Illegal escape in string: \"\\\" \\\\ \\q", 96))
+
+    def test_097(self):
+        """ILLEGAL_ESCAPE"""
+        self.assertTrue(TestLexer.test(""" "&\\&" """, "Illegal escape in string: \"&\\&", 97))
+
+    def test_098(self):
+        """ILLEGAL_ESCAPE"""
+        self.assertTrue(TestLexer.test(""" "\\z" """, "Illegal escape in string: \"\\z", 98))
+
+    def test_099(self):
+        """ILLEGAL_ESCAPE"""
+        self.assertTrue(TestLexer.test(""" "\\0" """, "Illegal escape in string: \"\\0", 99))
+
     def test_100(self):
-        self.assertTrue(TestLexer.test(
-            """var i int = s[2][2].callFunc(f1(2 + 2, abc)) + "strc";""",
-            "var,i,int,=,s,[,2,],[,2,],.,callFunc,(,f1,(,2,+,2,,,abc,),),+,\"strc\",;,<EOF>",
-            100
-        ))
+        """ILLEGAL_ESCAPE"""
+        self.assertTrue(TestLexer.test(""" "\\b" """, "Illegal escape in string: \"\\b", 100))
 
     def test_101(self):
-        self.assertTrue(TestLexer.test(
-            """x + y ;
-            3.14
-            a * b - c ;""",
-            "x,+,y,;,3.14,;,a,*,b,-,c,;,<EOF>",
-            101
-        ))
-
+        """NEW_LINE"""
+        self.assertTrue(TestLexer.test("""
+            1
+""", "1,;,<EOF>", 101))
+        
     def test_102(self):
-        self.assertTrue(TestLexer.test(
-            "\"hello world\" \n putInt( x + y ) ; \n getString ( ) ;",
-            "\"hello world\",;,putInt,(,x,+,y,),;,getString,(,),;,<EOF>",
-            102
-        ))
-
+        """NEW_LINE"""
+        self.assertTrue(TestLexer.test("""
+            0x1
+""", "0x1,;,<EOF>", 102))
+        
     def test_103(self):
-        self.assertTrue(TestLexer.test(
-            "if ( x > 0 ) { return x ; } \n for ( int i = 0 ; i < 10 ; i += 1) { return i ; }",
-            "if,(,x,>,0,),{,return,x,;,},;,for,(,int,i,=,0,;,i,<,10,;,i,+=,1,),{,return,i,;,},<EOF>",
-            103
-        ))
-
+        """NEW_LINE"""
+        self.assertTrue(TestLexer.test("""
+            "s"
+""", "\"s\",;,<EOF>", 103))
+        
     def test_104(self):
-        self.assertTrue(TestLexer.test(
-            "func foo ( x int , y int ) { return x + y ; } \n",
-            "func,foo,(,x,int,,,y,int,),{,return,x,+,y,;,},;,<EOF>",
-            104
-        ))
+        """NEW_LINE"""
+        self.assertTrue(TestLexer.test("""
+            true
+""", "true,;,<EOF>", 104))
         
     def test_105(self):
-        self.assertTrue(TestLexer.test(
-            """
-            var x int ;
-            const y float = 3.14 ;
-            func add(a int, b int) int {
-                return a + b ;
-            }
-            x = y + 10
-            """,
-            "var,x,int,;,const,y,float,=,3.14,;,func,add,(,a,int,,,b,int,),int,{,return,a,+,b,;,},;,x,=,y,+,10,;,<EOF>",
-            105
-        ))
-
+        """NEW_LINE"""
+        self.assertTrue(TestLexer.test("""
+            2.
+""", "2.,;,<EOF>", 105))
+        
     def test_106(self):
-        self.assertTrue(TestLexer.test(
-            """
-            func foo( x int , y int ) { return x + y ; }
-            var a = 10 ;
-            3.14
-            """,
-            "func,foo,(,x,int,,,y,int,),{,return,x,+,y,;,},;,var,a,=,10,;,3.14,;,<EOF>",
-            106
-        ))
-
+        """NEW_LINE"""
+        self.assertTrue(TestLexer.test("""
+            ID
+""", "ID,;,<EOF>", 106))
+        
     def test_107(self):
-        self.assertTrue(TestLexer.test(
-            """
-            if (x > 0) {
-                for (i = 0 ; i < 10 ; i += 1) {
-                    putInt( i );
-                }
-            } else {
-                return false
-            }""",
-            "if,(,x,>,0,),{,for,(,i,=,0,;,i,<,10,;,i,+=,1,),{,putInt,(,i,),;,},;,},else,{,return,false,;,},<EOF>",
-            107
-        ))
-
+        """NEW_LINE"""
+        self.assertTrue(TestLexer.test("""
+            return
+""", "return,;,<EOF>", 107))
+        
     def test_108(self):
-        self.assertTrue(TestLexer.test(
-            """
-            var int = 123 ;
-            func test(x int, y float) {
-                return x / y ;
-            }
-            const z boolean = true && false ;
-            """,
-            "var,int,=,123,;,func,test,(,x,int,,,y,float,),{,return,x,/,y,;,},;,const,z,boolean,=,true,&&,false,;,<EOF>",
-            108
-        ))
-
+        """NEW_LINE"""
+        self.assertTrue(TestLexer.test("""
+            continue
+            break
+""", "continue,;,break,;,<EOF>", 108))
+        
     def test_109(self):
-        self.assertTrue(TestLexer.test(
-            """
-            putStringLn( "Hello, world!" );
-            putIntLn(x + y) ;
-            func invalidFunc( ) { return ; }
-            for (int i = 0 ; i < 10 ; i += 1 ) {
-                // missing initialization
-            }""",
-            """putStringLn,(,\"Hello, world!\",),;,putIntLn,(,x,+,y,),;,func,invalidFunc,(,),{,return,;,},;,for,(,int,i,=,0,;,i,<,10,;,i,+=,1,),{,},<EOF>""",
-            109
-        ))
-    
+        """NEW_LINE"""
+        self.assertTrue(TestLexer.test("""
+            if
+            }
+            ]
+            )
+""", "if,},;,],;,),;,<EOF>", 109))
+        
     def test_110(self):
-        self.assertTrue(TestLexer.test(
-            """
-            type Point struct {
-                x int ;
-                y int ;
-            }
-
-            func (p Point) distance( ) float {
-                return sqrt(p.x * p.x + p.y * p.y) ;
-            }
-
-            func main( ) {
-                var p Point = Point{3, 4} ;
-                putFloatLn( p.distance( ) );
-            }""",
-            "type,Point,struct,{,x,int,;,y,int,;,},;,func,(,p,Point,),distance,(,),float,{,return,sqrt,(,p,.,x,*,p,.,x,+,p,.,y,*,p,.,y,),;,},;,func,main,(,),{,var,p,Point,=,Point,{,3,,,4,},;,putFloatLn,(,p,.,distance,(,),),;,},<EOF>",
-            110
-        ))
-
+        """NEW_LINE"""
+        self.assertTrue(TestLexer.test("""
+            nil
+""", "nil,;,<EOF>", 110))
+        
     def test_111(self):
-        self.assertTrue(TestLexer.test(
-            """
-            var x int = 10 \n
-            var y float = 3.14 \n
-            var z string = "hello";
-            """,
-            "var,x,int,=,10,;,var,y,float,=,3.14,;,var,z,string,=,\"hello\",;,<EOF>",
-            111
-        ))
+        self.assertTrue(TestLexer.test("""
+            1e+7
+""", "1,e,+,7,;,<EOF>", 111))
         
     def test_112(self):
-        self.assertTrue(TestLexer.test(
-            """
-            0x12 ;
-            0x123GH ;
-            """,
-            "0x12,;,0x123,GH,;,<EOF>",
-            112
-        ))
+        self.assertTrue(TestLexer.test("""
+           \"12\"\"
+""", "\"12\",Unclosed string: \"", 112))
         
     def test_113(self):
-        self.assertTrue(TestLexer.test(
-            "abc /* unclosed comment", 
-            "abc,/,*,unclosed,comment,<EOF>", 
-            113
-        ))
+        """NEW_LINE"""
+        self.assertTrue(TestLexer.test("""
+            nil
+""", "nil,;,<EOF>", 113))
         
     def test_114(self):
-        self.assertTrue(TestLexer.test(
-            "@_ @a @13",
-            "ErrorToken @",
-            114
-        ))
+        """NEW_LINE"""
+        self.assertTrue(TestLexer.test("""
+            nil
+""", "nil,;,<EOF>", 114))
         
     def test_115(self):
-        self.assertTrue(TestLexer.test(
-            "/* test1 \n //test2 \n /*test3*/ asdasdas */",
-            "<EOF>",
-            115
-        ))
+        """NEW_LINE"""
+        self.assertTrue(TestLexer.test("""
+            nil
+""", "nil,;,<EOF>", 115))
         
     def test_116(self):
-        self.assertTrue(TestLexer.test(
-            "1234 0 9876",
-            "1234,0,9876,<EOF>",
-            116
-        ))
-    
+        """NEW_LINE"""
+        self.assertTrue(TestLexer.test("""
+            nil
+""", "nil,;,<EOF>", 116))
+        
     def test_117(self):
-        self.assertTrue(TestLexer.test(
-            """ "valid string" "invalid string 
-            """,
-            "\"valid string\",Unclosed string: \"invalid string ", 
-            117
-        ))
-    
+        """NEW_LINE"""
+        self.assertTrue(TestLexer.test("""
+            nil
+""", "nil,;,<EOF>", 117))
+        
     def test_118(self):
-        self.assertTrue(TestLexer.test(
-            "func main() { return 0x1A3F; }",
-            "func,main,(,),{,return,0x1A3F,;,},<EOF>",
-            118
-        ))
+        """NEW_LINE"""
+        self.assertTrue(TestLexer.test("""
+            nil\n/*
+*/""", "nil,;,<EOF>", 118))
     
     def test_119(self):
-        self.assertTrue(TestLexer.test(
-            "/* This is a block comment */ var x = 10;",
-            "var,x,=,10,;,<EOF>",
-            119
-        ))
-    
+        """NEW_LINE"""
+        self.assertTrue(TestLexer.test("""
+            nil/*
+*/\n""", "nil,;,<EOF>", 119))
+        
     def test_120(self):
-        self.assertTrue(TestLexer.test(
-            "! && || == != < > <= >=",
-            "!,&&,||,==,!=,<,>,<=,>=,<EOF>",
-            120
-        ))
-    
+        """NEW_LINE"""
+        self.assertTrue(TestLexer.test("""
+            nil/*
+*/""", "nil,<EOF>", 120))
+        
     def test_121(self):
-        self.assertTrue(TestLexer.test(
-            """ var arr = [1, 2, 3, 4]; """,
-            "var,arr,=,[,1,,,2,,,3,,,4,],;,<EOF>",
-            121
-        ))
-    
-    def test_122(self):
-        self.assertTrue(TestLexer.test(
-            "const PI = 3.14159;",
-            "const,PI,=,3.14159,;,<EOF>",
-            122
-        ))
-    
-    def test_123(self):
-        self.assertTrue(TestLexer.test(
-            """putStringLn("Escape \\" test\\"")""",
-            """putStringLn,(,\"Escape \\" test\\"\",),<EOF>""",
-            123
-        ))
-    
-    def test_124(self):
-        self.assertTrue(TestLexer.test(
-            "while (x != 0) { x -= 1; }",
-            "while,(,x,!=,0,),{,x,-=,1,;,},<EOF>",
-            124
-        ))
-        
-    def test_125(self):
-        self.assertTrue(TestLexer.test(
-            """
-            var a int = 10;
-            var b float = 20.5;
-            var c string = "Hello, MiniGo!";
-            var d boolean = true;
-            """,
-            "var,a,int,=,10,;,var,b,float,=,20.5,;,var,c,string,=,\"Hello, MiniGo!\",;,var,d,boolean,=,true,;,<EOF>",
-            125
-        ))
-
-    def test_126(self):
-        self.assertTrue(TestLexer.test(
-            """
-            func factorial(n int) int {
-                if n == 0 {
-                    return 1;
-                }
-                return n * factorial(n - 1);
-            }""",
-            "func,factorial,(,n,int,),int,{,if,n,==,0,{,return,1,;,},;,return,n,*,factorial,(,n,-,1,),;,},<EOF>",
-            126
-        ))
-
-    def test_127(self):
-        self.assertTrue(TestLexer.test(
-            """
-            type Person struct {
-                name string;
-                age int;
-            }
-
-            func main() {
-                var p Person = Person{"Alice", 25};
-                putStringLn(p.name);
-                putIntLn(p.age);
-            }""",
-            "type,Person,struct,{,name,string,;,age,int,;,},;,func,main,(,),{,var,p,Person,=,Person,{,\"Alice\",,,25,},;,putStringLn,(,p,.,name,),;,putIntLn,(,p,.,age,),;,},<EOF>",
-            127
-        ))
-
-    def test_128(self):
-        self.assertTrue(TestLexer.test(
-            """
-            func fibonacci(n int) int {
-                var a int = 0;
-                var b int = 1;
-                for i := 0; i < n; i += 1 {
-                    var temp int = a + b;
-                    a = b;
-                    b = temp;
-                }
-                return a;
-            }""",
-            "func,fibonacci,(,n,int,),int,{,var,a,int,=,0,;,var,b,int,=,1,;,for,i,:=,0,;,i,<,n,;,i,+=,1,{,var,temp,int,=,a,+,b,;,a,=,b,;,b,=,temp,;,},;,return,a,;,},<EOF>",
-            128
-        ))
-
-    def test_129(self):
-        self.assertTrue(TestLexer.test(
-            """
-            var arr [5] int = [1, 2, 3, 4, 5];
-
-            func sumArray(arr [5] int) int {
-                var sum int = 0;
-                for i := 0; i < 5; i += 1 {
-                    sum += arr[i];
-                }
-                return sum;
-            }""",
-            "var,arr,[,5,],int,=,[,1,,,2,,,3,,,4,,,5,],;,func,sumArray,(,arr,[,5,],int,),int,{,var,sum,int,=,0,;,for,i,:=,0,;,i,<,5,;,i,+=,1,{,sum,+=,arr,[,i,],;,},;,return,sum,;,},<EOF>",
-            129
-        ))
-
-    def test_130(self):
-        self.assertTrue(TestLexer.test(
-            """
-            func main() {
-                var x float = 5.25;
-                var y float = 2.75;
-                var result float = x * y + (x / y) - (x - y);
-                putFloatLn(result);
-            }""",
-            "func,main,(,),{,var,x,float,=,5.25,;,var,y,float,=,2.75,;,var,result,float,=,x,*,y,+,(,x,/,y,),-,(,x,-,y,),;,putFloatLn,(,result,),;,},<EOF>",
-            130
-        ))
-
-    def test_131(self):
-        self.assertTrue(TestLexer.test(
-            """
-            var a, b, c int = 1, 2, 3;
-            var d, e, f float = 1.1, 2.2, 3.3;
-            var g, h, i string = "one", "two", "three";
-            """,
-            "var,a,,,b,,,c,int,=,1,,,2,,,3,;,var,d,,,e,,,f,float,=,1.1,,,2.2,,,3.3,;,var,g,,,h,,,i,string,=,\"one\",,,\"two\",,,\"three\",;,<EOF>",
-            131
-        ))
-
-    def test_132(self):
-        self.assertTrue(TestLexer.test(
-            """
-            func power(base int, exp int) int {
-                var result int = 1;
-                for i := 0; i < exp; i += 1 {
-                    result *= base;
-                }
-                return result;
-            }""",
-            "func,power,(,base,int,,,exp,int,),int,{,var,result,int,=,1,;,for,i,:=,0,;,i,<,exp,;,i,+=,1,{,result,*=,base,;,},;,return,result,;,},<EOF>",
-            132
-        ))
-
-    def test_133(self):
-        self.assertTrue(TestLexer.test(
-            """
-            func sumRange(start int, end int) int {
-                var sum int = 0;
-                for i := start; i <= end; i += 1 {
-                    sum += i;
-                }
-                return sum;
-            }""",
-            "func,sumRange,(,start,int,,,end,int,),int,{,var,sum,int,=,0,;,for,i,:=,start,;,i,<=,end,;,i,+=,1,{,sum,+=,i,;,},;,return,sum,;,},<EOF>",
-            133
-        ))
-
-    def test_134(self):
-        self.assertTrue(TestLexer.test(
-            """
-            func gcd(a int, b int) int {
-                while b != 0 {
-                    var temp int = b;
-                    b = a % b;
-                    a = temp;
-                }
-                return a;
-            }""",
-            "func,gcd,(,a,int,,,b,int,),int,{,while,b,!=,0,{,var,temp,int,=,b,;,b,=,a,%,b,;,a,=,temp,;,},;,return,a,;,},<EOF>",
-            134
-        ))
-
-    def test_135(self):
-        input = """func main() {
-            var sum int = 0;
-            for i := 1; i <= 10; i += 1 {
-                if (i % 2 == 0) {
-                    sum += i;
-                }
-            }
-            putIntLn(sum);
-        }"""
-        expect = "func,main,(,),{,var,sum,int,=,0,;,for,i,:=,1,;,i,<=,10,;,i,+=,1,{,if,(,i,%,2,==,0,),{,sum,+=,i,;,},;,},;,putIntLn,(,sum,),;,},<EOF>"
-        self.assertTrue(TestLexer.test(input, expect, 135))
-
-    def test_136(self):
-        input = """type Student struct {
-            name string;
-            grades [3]int;
-        }
-        func main() {
-            var s Student = Student{name: "Alice", grades: [3]int{90, 85, 88}};
-            putStringLn(s.name);
-            for i := 0; i < 3; i += 1 {
-                putIntLn(s.grades[i]);
-            }
-        }"""
-        expect = """type,Student,struct,{,name,string,;,grades,[,3,],int,;,},;,func,main,(,),{,var,s,Student,=,Student,{,name,:,\"Alice\",,,grades,:,[,3,],int,{,90,,,85,,,88,},},;,putStringLn,(,s,.,name,),;,for,i,:=,0,;,i,<,3,;,i,+=,1,{,putIntLn,(,s,.,grades,[,i,],),;,},;,},<EOF>"""
-        self.assertTrue(TestLexer.test(input, expect, 136))
-        
-    def test_137(self):
-        input = """func sort(arr [5]int) [5]int {
-            var temp int;
-            for i := 0; i < 5; i += 1 {
-                for j := i + 1; j < 5; j += 1 {
-                    if (arr[i] > arr[j]) {
-                        temp = arr[i];
-                        arr[i] = arr[j];
-                        arr[j] = temp;
-                    }
-                }
-            }
-            return arr;
-        }
-        func main() {
-            var nums [5]int = [5]int{5, 3, 4, 1, 2};
-            var sorted [5]int = sort(nums);
-            for i := 0; i < 5; i += 1 {
-                putIntLn(sorted[i]);
-            }
-        }"""
-        expect = "func,sort,(,arr,[,5,],int,),[,5,],int,{,var,temp,int,;,for,i,:=,0,;,i,<,5,;,i,+=,1,{,for,j,:=,i,+,1,;,j,<,5,;,j,+=,1,{,if,(,arr,[,i,],>,arr,[,j,],),{,temp,=,arr,[,i,],;,arr,[,i,],=,arr,[,j,],;,arr,[,j,],=,temp,;,},;,},;,},;,return,arr,;,},;,func,main,(,),{,var,nums,[,5,],int,=,[,5,],int,{,5,,,3,,,4,,,1,,,2,},;,var,sorted,[,5,],int,=,sort,(,nums,),;,for,i,:=,0,;,i,<,5,;,i,+=,1,{,putIntLn,(,sorted,[,i,],),;,},;,},<EOF>"
-        self.assertTrue(TestLexer.test(input, expect, 137))
-
-    def test_138(self):
-        input = """type Student struct {
-            name string;
-            grades [5]int;
-        }
-        func (s Student) Average() float {
-            var total int = 0;
-            for i := 0; i < 5; i += 1 {
-                total += s.grades[i];
-            }
-            return to_float(total) / 5.0;
-        }
-        func main() {
-            var s Student = Student{name: "Bob", grades: [5]int{90, 85, 78, 92, 88}};
-            var avg float = s.Average();
-            putFloatLn(avg);
-        }"""
-        expect = "type,Student,struct,{,name,string,;,grades,[,5,],int,;,},;,func,(,s,Student,),Average,(,),float,{,var,total,int,=,0,;,for,i,:=,0,;,i,<,5,;,i,+=,1,{,total,+=,s,.,grades,[,i,],;,},;,return,to_float,(,total,),/,5.0,;,},;,func,main,(,),{,var,s,Student,=,Student,{,name,:,\"Bob\",,,grades,:,[,5,],int,{,90,,,85,,,78,,,92,,,88,},},;,var,avg,float,=,s,.,Average,(,),;,putFloatLn,(,avg,),;,},<EOF>"
-        self.assertTrue(TestLexer.test(input, expect, 138))
-
-    def test_139(self):
-        input = """func findMax(arr [5]int) int {
-            var max int = arr[0];
-            for i := 1; i < 5; i += 1 {
-                if (arr[i] > max) {
-                    max = arr[i];
-                }
-            }
-            return max;
-        }
-        func main() {
-            var nums [5]int = [5]int{10, 20, 5, 30, 15};
-            var maxValue int = findMax(nums);
-            putIntLn(maxValue);
-        }"""
-        expect = "func,findMax,(,arr,[,5,],int,),int,{,var,max,int,=,arr,[,0,],;,for,i,:=,1,;,i,<,5,;,i,+=,1,{,if,(,arr,[,i,],>,max,),{,max,=,arr,[,i,],;,},;,},;,return,max,;,},;,func,main,(,),{,var,nums,[,5,],int,=,[,5,],int,{,10,,,20,,,5,,,30,,,15,},;,var,maxValue,int,=,findMax,(,nums,),;,putIntLn,(,maxValue,),;,},<EOF>"
-        self.assertTrue(TestLexer.test(input, expect, 139))
-
-    def test_140(self):
-        input = """type Point struct {
-            x int;
-            y int;
-        }
-        type Rectangle struct {
-            topLeft Point;
-            bottomRight Point;
-        }
-        func (r Rectangle) Area() int {
-            var width int = r.bottomRight.x - r.topLeft.x;
-            var height int = r.bottomRight.y - r.topLeft.y;
-            return width * height;
-        }
-        func main() {
-            var rect Rectangle = Rectangle{topLeft: Point{x: 1, y: 5}, bottomRight: Point{x: 4, y: 1}};
-            var area int = rect.Area();
-            putIntLn(area);
-        }"""
-        expect = "type,Point,struct,{,x,int,;,y,int,;,},;,type,Rectangle,struct,{,topLeft,Point,;,bottomRight,Point,;,},;,func,(,r,Rectangle,),Area,(,),int,{,var,width,int,=,r,.,bottomRight,.,x,-,r,.,topLeft,.,x,;,var,height,int,=,r,.,bottomRight,.,y,-,r,.,topLeft,.,y,;,return,width,*,height,;,},;,func,main,(,),{,var,rect,Rectangle,=,Rectangle,{,topLeft,:,Point,{,x,:,1,,,y,:,5,},,,bottomRight,:,Point,{,x,:,4,,,y,:,1,},},;,var,area,int,=,rect,.,Area,(,),;,putIntLn,(,area,),;,},<EOF>"
-        self.assertTrue(TestLexer.test(input, expect, 140))
-
-    def test_141(self):
-        input = """func main() {
-            var a int = 3;
-            var b int = 10;
-            var c int = 7;
-            if (a < b && b > c) {
-                if (c > a) {
-                    putStringLn("c is the largest among a, b, and c");
-                }
-            } else {
-                putStringLn("b is not the largest");
-            }
-        }"""
-        expect = """func,main,(,),{,var,a,int,=,3,;,var,b,int,=,10,;,var,c,int,=,7,;,if,(,a,<,b,&&,b,>,c,),{,if,(,c,>,a,),{,putStringLn,(,\"c is the largest among a, b, and c\",),;,},;,},else,{,putStringLn,(,\"b is not the largest\",),;,},;,},<EOF>"""
-        self.assertTrue(TestLexer.test(input, expect, 141))
-
-    def test_142(self):
-        input = """type Employee struct {
-            name string;
-            salary float;
-        }
-        func increaseSalary(emp Employee, percent float) Employee {
-            emp.salary += emp.salary * (percent / 100.0);
-            return emp;
-        }
-        func main() {
-            var emp Employee = Employee{name: "Alice", salary: 50000.0};
-            emp = increaseSalary(emp, 10);
-            putFloatLn(emp.salary);
-        }"""
-        expect = """type,Employee,struct,{,name,string,;,salary,float,;,},;,func,increaseSalary,(,emp,Employee,,,percent,float,),Employee,{,emp,.,salary,+=,emp,.,salary,*,(,percent,/,100.0,),;,return,emp,;,},;,func,main,(,),{,var,emp,Employee,=,Employee,{,name,:,\"Alice\",,,salary,:,50000.0,},;,emp,=,increaseSalary,(,emp,,,10,),;,putFloatLn,(,emp,.,salary,),;,},<EOF>"""
-        self.assertTrue(TestLexer.test(input, expect, 142))
-
-    def test_143(self):
-        input = """func main() {
-            var chars [5]rune = [5]rune{\"H\", \"e\", \"l\", \"l\",\"o\"};
-            var str string = "";
-            for i := 0; i < 5; i += 1 {
-                str += to_string(chars[i]);
-            }
-            putStringLn(str);
-        }"""
-        expect = "func,main,(,),{,var,chars,[,5,],rune,=,[,5,],rune,{,\"H\",,,\"e\",,,\"l\",,,\"l\",,,\"o\",},;,var,str,string,=,\"\",;,for,i,:=,0,;,i,<,5,;,i,+=,1,{,str,+=,to_string,(,chars,[,i,],),;,},;,putStringLn,(,str,),;,},<EOF>"
-        self.assertTrue(TestLexer.test(input, expect, 143))
-
-    def test_144(self):
-        input = """func main() {
-            var count int = 10;
-            for count > 0 {
-                putIntLn(count);
-                count = count - 1;
-            }
-            putStringLn("Countdown complete!");
-        }"""
-        expect = "func,main,(,),{,var,count,int,=,10,;,for,count,>,0,{,putIntLn,(,count,),;,count,=,count,-,1,;,},;,putStringLn,(,\"Countdown complete!\",),;,},<EOF>"
-        self.assertTrue(TestLexer.test(input, expect, 144))
-
-    def test_145(self):
-        input = """type Car struct {
-            model string;
-            year int;
-        }
-        func (c Car) Info() string {
-            return c.model + " (" + to_string(c.year) + ")";
-        }
-        func main() {
-            var myCar Car = Car{model: "Toyota", year: 2021};
-            var info string = myCar.Info();
-            putStringLn(info);
-        }"""
-        expect = """type,Car,struct,{,model,string,;,year,int,;,},;,func,(,c,Car,),Info,(,),string,{,return,c,.,model,+,\" (\",+,to_string,(,c,.,year,),+,\")\",;,},;,func,main,(,),{,var,myCar,Car,=,Car,{,model,:,\"Toyota\",,,year,:,2021,},;,var,info,string,=,myCar,.,Info,(,),;,putStringLn,(,info,),;,},<EOF>"""
-        self.assertTrue(TestLexer.test(input, expect, 145))
-        
-    def test_146(self):
-        self.assertTrue(TestLexer.test(
-            """var a int = 1;""",
-            "var,a,int,=,1,;,<EOF>",
-            146
-        ))
-    
-    def test_147(self):
-        self.assertTrue(TestLexer.test(
-            """0b10101; 0B11010; 0o52; 0O77;""",
-            "0b10101,;,0B11010,;,0o52,;,0O77,;,<EOF>",
-            147
-        ))
-    
-    def test_148(self):
-        self.assertTrue(TestLexer.test(
-            """\"Hello \\"world\\" \"""",
-            """\"Hello \\"world\\" \",<EOF>""",
-            148
-        ))
-    
-    def test_149(self):
-        self.assertTrue(TestLexer.test(
-            """if (x >= 10 && y <= 5 || z != 0) { return; }""",
-            "if,(,x,>=,10,&&,y,<=,5,||,z,!=,0,),{,return,;,},<EOF>",
-            149
-        ))
-    
-    def test_150(self):
-        self.assertTrue(TestLexer.test(
-            """// This is a single-line comment\nvar x int = 5;""",
-            "var,x,int,=,5,;,<EOF>",
-            150
-        ))
-    
-    def test_151(self):
-        self.assertTrue(TestLexer.test(
-            """/* This is a \n multi-line comment */ var y float = 3.14;""",
-            "var,y,float,=,3.14,;,<EOF>",
-            151
-        ))
-    
-    def test_152(self):
-        self.assertTrue(TestLexer.test(
-            """for i := 0; i < 10; i += 1 { putIntLn(i); }""",
-            "for,i,:=,0,;,i,<,10,;,i,+=,1,{,putIntLn,(,i,),;,},<EOF>",
-            152
-        ))
-    
-    def test_153(self):
-        self.assertTrue(TestLexer.test(
-            """type Point struct { x int; y int; }""",
-            "type,Point,struct,{,x,int,;,y,int,;,},<EOF>",
-            153
-        ))
-    
-    def test_154(self):
-        self.assertTrue(TestLexer.test(
-            """const PI float = 3.14159;""",
-            "const,PI,float,=,3.14159,;,<EOF>",
-            154
-        ))
-    
-    def test_155(self):
-        self.assertTrue(TestLexer.test(
-            """getStringLn();""",
-            "getStringLn,(,),;,<EOF>",
-            155
-        ))
-
-    def test_156(self):
-        self.assertTrue(TestLexer.test(
-            """x := 42 + 0x2A;""",
-            "x,:=,42,+,0x2A,;,<EOF>",
-            156
-        ))
-    
-    def test_157(self):
-        self.assertTrue(TestLexer.test(
-            """var flag boolean = true && !false;""",
-            "var,flag,boolean,=,true,&&,!,false,;,<EOF>",
-            157
-        ))
-    
-    def test_158(self):
-        self.assertTrue(TestLexer.test(
-            """\"This is a string with \\n newline\"""",
-            """\"This is a string with \\n newline\",<EOF>""",
-            158
-        ))
-    
-    def test_159(self):
-        self.assertTrue(TestLexer.test(
-            """func add(a int, b int) int { return a + b; }""",
-            "func,add,(,a,int,,,b,int,),int,{,return,a,+,b,;,},<EOF>",
-            159
-        ))
-    
-    def test_160(self):
-        self.assertTrue(TestLexer.test(
-            """var arr [3]float = [3]float{1.1, 2.2, 3.3};""",
-            "var,arr,[,3,],float,=,[,3,],float,{,1.1,,,2.2,,,3.3,},;,<EOF>",
-            160
-        ))
-    
-    def test_161(self):
-        self.assertTrue(TestLexer.test(
-            """/* Nested /* comment */ still valid */""",
-            "<EOF>",
-            161
-        ))
-    
-    def test_162(self):
-        self.assertTrue(TestLexer.test(
-            """const MAX_VALUE = 100;""",
-            "const,MAX_VALUE,=,100,;,<EOF>",
-            162
-        ))
-    
-    def test_163(self):
-        self.assertTrue(TestLexer.test(
-            """range array { putInt(i); }""",
-            "range,array,{,putInt,(,i,),;,},<EOF>",
-            163
-        ))
-    
-    def test_164(self):
-        self.assertTrue(TestLexer.test(
-            """nil;""",
-            "nil,;,<EOF>",
-            164
-        ))
-    
-    def test_165(self):
-        self.assertTrue(TestLexer.test(
-            """putStringLn("Hello, \\"MiniGo\\"!");""",
-            """putStringLn,(,\"Hello, \\"MiniGo\\"!\",),;,<EOF>""",
-            165
-        ))
+        """NEW_LINE"""
+        self.assertTrue(TestLexer.test("""
+            nil
+""", "nil,;,<EOF>", 121))

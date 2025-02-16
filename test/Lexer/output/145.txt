@@ -1,1 +1,0 @@
-type,Car,struct,{,model,string,;,year,int,;,},;,func,(,c,Car,),Info,(,),string,{,return,c,.,model,+," (",+,to_string,(,c,.,year,),+,")",;,},;,func,main,(,),{,var,myCar,Car,=,Car,{,model,:,"Toyota",,,year,:,2021,},;,var,info,string,=,myCar,.,Info,(,),;,putStringLn,(,info,),;,},<EOF>
