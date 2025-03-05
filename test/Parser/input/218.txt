@@ -1,6 +1,11 @@
-    
-            func VoTien() {
-                x  := foo() + 3 / 4;
-                x.c[2][4] = 1 + 2;                       
-            }                                       
-        
+func main() {
+            for i := 0; i < 10; i += 1 {
+                if (i == 5) {
+                    break;
+                }
+                if (i % 2 == 0) {
+                    continue;
+                }
+                putIntLn(i);
+            }
+        }

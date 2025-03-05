@@ -1,5 +1,9 @@
 
-                                    func Add() {
-                                        break continue
-                    
-                                    };
+    func foo () {
+        a();
+        a(1, 2);
+        a(1);
+        b.a.a();
+        b.a.a(1, 2);
+        b.a.a(1);
+    }

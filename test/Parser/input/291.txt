@@ -3,9 +3,9 @@ func sort(arr [5]int) [5]int {
             for i := 0; i < 5; i += 1 {
                 for j := i + 1; j < 5; j += 1 {
                     if (arr[i] > arr[j]) {
-                        temp = arr[i];
-                        arr[i] = arr[j];
-                        arr[j] = temp;
+                        temp := arr[i];
+                        arr[i] := arr[j];
+                        arr[j] := temp;
                     }
                 }
             }

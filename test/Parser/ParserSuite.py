@@ -11,1172 +11,1465 @@ from TestUtils import TestParser
 
 class ParserSuite(unittest.TestCase):
     def test_001(self):
-        """Literal"""
-        self.assertTrue(TestParser.test("const Votien = 1;","successful", 1))
+        input = """const VoTien = foo( 1 ); """
+        # # # expect = Program([ConstDecl("VoTien",None,FuncCall("foo",[IntLiteral(1)]))
+		
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_002(self):
-        """Literal"""
-        self.assertTrue(TestParser.test("const Votien = true;","successful", 2))
+        input = """const VoTien = foo( 1.0,true,false,nil,\"votien\" ); """
+        # # # expect = Program([ConstDecl("VoTien",None,FuncCall("foo",[FloatLiteral(1.0),BooleanLiteral(True),BooleanLiteral(False),NilLiteral(),StringLiteral("\"votien\"")]))
+		
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_003(self):
-        """Literal"""
-        self.assertTrue(TestParser.test("const Votien = [5][0]string{1, \"string\"};","successful", 3))
+        input = """const VoTien = foo( id ); """
+        # # expect = Program([ConstDecl("VoTien",None,FuncCall("foo",[Id("id")]))
+	
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_004(self):
-        """Literal"""
-        self.assertTrue(TestParser.test("const Votien = [1.]ID{1, 3};","Error on line 1 col 16: 1.", 4))
+        input = """const VoTien = foo( 1+2-3&&5--1); """
+        # # expect = Program([ConstDecl("VoTien",None,FuncCall("foo",[BinaryOp("&&", BinaryOp("-", BinaryOp("+", IntLiteral(1), IntLiteral(2)), IntLiteral(3)), BinaryOp("-", IntLiteral(5), UnaryOp("-",IntLiteral(1))))]))
+		
+        self.assertTrue(TestParser.test(input, "successful", 4))
 
     def test_005(self):
-        """Literal"""
-        self.assertTrue(TestParser.test("const Votien = Person{name: \"Alice\", age: 30};","successful", 5))
+        input = """const VoTien = foo( a > b <= c ); """
+        # # # expect = Program([ConstDecl("VoTien",None,FuncCall("foo",[BinaryOp("<=", BinaryOp(">", Id("a"), Id("b")), Id("c"))]))
+		
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_006(self):
-        """expression"""
-        self.assertTrue(TestParser.test("const Votien = 1 || 2 && c + 3 / 2 - -1;","successful", 6))
+        input = """const VoTien = foo( a[2][3] ); """
+        # # # expect = Program([ConstDecl("VoTien",None,FuncCall("foo",[ArrayCell(Id("a"),[IntLiteral(2),IntLiteral(3)])]))
+		
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_007(self):
-        """expression"""
-        self.assertTrue(TestParser.test("const Votien = 1[2] + foo()[2] + ID[2].b.b;","successful", 7))
+        input = """const VoTien = foo( a.b.c ); """
+        # # # expect = Program([ConstDecl("VoTien",None,FuncCall("foo",[FieldAccess(FieldAccess(Id("a"),"b"),"c")]))
+		
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_008(self):
-        """expression"""
-        self.assertTrue(TestParser.test("const Votien = ca.foo(132) + b.c[2];","successful", 8))
+        input = """const VoTien = foo( a(),b.a(2, 3) ); """
+        # # # expect = Program([ConstDecl("VoTien",None,FuncCall("foo",[FuncCall("a",[]),MethCall(Id("b"),"a",[IntLiteral(2),IntLiteral(3)])]))
+		
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_009(self):
-        """expression"""
-        self.assertTrue(TestParser.test("const Votien = a.a.foo();","successful", 9))
+        input = """const VoTien = foo( a * (1+2) ); """
+        # # # expect = Program([ConstDecl("VoTien",None,FuncCall("foo",[BinaryOp("*", Id("a"), BinaryOp("+", IntLiteral(1), IntLiteral(2)))]))
+		
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_010(self):
-        """declared variables"""
-        self.assertTrue(TestParser.test("""
-            var x int = foo() + 3 / 4;
-            var y = "Hello" / 4;   
-            var z str;
-        ""","successful", 10))
+        input = """const VoTien = foo( Votien {}, Votien {a: 1} ); """
+        # # # expect = Program([ConstDecl("VoTien",None,FuncCall("foo",[StructLiteral("Votien",[]),StructLiteral("Votien",[("a",IntLiteral(1))])]))
+		
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_011(self):
-        """declared constants"""
-        self.assertTrue(TestParser.test("""
-            const VoTien = a.b() + 2;
-        ""","successful", 11))
+        input = """const VoTien = foo( [1]int{1}, [1][1]int{2} ); """
+        # # # expect = Program([ConstDecl("VoTien",None,FuncCall("foo",[ArrayLiteral([IntLiteral(1)],IntType(),[IntLiteral(1)]),ArrayLiteral([IntLiteral(1),IntLiteral(1)],IntType(),[IntLiteral(2)])]))
+		
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_012(self):
-        """declared function"""
-        self.assertTrue(TestParser.test("""
-            func VoTien(x int, y int) int {return;}
-            func VoTien1() [2][3] ID {return;};        
-            func VoTien2() {return;}                                       
-        ""","successful", 12))
+        input = """
+            var Votien = 1;
+            var Votien int;
+            var Votine int = 1;
+"""
+        # # # expect = Program([VarDecl("Votien", None,IntLiteral(1)),
+			# VarDecl("Votien",IntType(), None),
+			# VarDecl("Votine",IntType(),IntLiteral(1))
+		
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_013(self):
-        """declared method"""
-        self.assertTrue(TestParser.test("""
-            func (c Calculator) VoTien(x int) int {return;};  
-            func (c Calculator) VoTien() ID {return;}      
-            func (c Calculator) VoTien(x int, y [2]VoTien) {return;}                                                      
-        ""","successful", 13))
+        input = """
+            func foo() int {return;}
+            func foo(a int, b int) {return;}
+"""
+        # # # expect = Program([FuncDecl("foo",[],IntType(),Block([Return(None)])),
+		# 	FuncDecl("foo",[ParamDecl("a",IntType()),ParamDecl("b",IntType())],VoidType(),Block([Return(None)]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_014(self):
-        """declared struct"""
-        self.assertTrue(TestParser.test("""
-            type VoTien struct {
-                VoTien string ;
-                VoTien [1][3]VoTien ;                     
-            }                                                                     
-        ""","successful", 14))
+        input = """
+            func (Votien v) foo(Votien int) {return;}
+"""
+        # # # expect = Program([MethodDecl("Votien",Id("v"),FuncDecl("foo",[ParamDecl("Votien",IntType())],VoidType(),Block([Return(None)])))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
 
     def test_015(self):
-        """declared Interface"""
-        self.assertTrue(TestParser.test("""
-            type VoTien struct {}                                                                       
-        ""","Error on line 2 col 32: }", 15))
+        input = """
+            type Votien struct {
+                a int;
+            }
+"""
+        # # # expect = Program([StructType("Votien",[("a",IntType())],[])
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
 
     def test_016(self):
-        """declared Interface"""
-        self.assertTrue(TestParser.test("""
-            type Calculator interface {
-                                        
-                Add(x, y int) int;
-                Subtract(a, b float, c int) [3]ID;
-                Reset()
-                                        
-                SayHello(name string);
-                                        
+        input = """
+            type Votien struct {
+                a int;
             }
-            type VoTien interface {}                                                                       
-        ""","Error on line 11 col 35: }", 16))
+"""
+        # # # expect = Program([StructType("Votien",[("a",IntType())],[])
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_017(self):
-        """declared_statement"""
-        self.assertTrue(TestParser.test("""    
-            func VoTien() {
-                var x int = foo() + 3 / 4;
-                var y = "Hello" / 4;   
-                var z str;
-                                        
-                const VoTien = a.b() + 2;
-            }                                       
-        ""","successful", 17))
+        input = """
+            type Votien interface {
+                Add(x, y int) int;
+            }
+"""
+        # # expect = Program([FuncDecl("votien",[],VoidType(),Block([VarDecl("a",IntType(), None),ConstDecl("a",None,NilLiteral())]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
+    def test_017(self):
+        input = """
+            func votien() {
+                var a int;
+                const a = nil;
+            }
+"""
+        # # expect = Program([FuncDecl("votien",[],VoidType(),Block([VarDecl("a",IntType(), None),ConstDecl("a",None,NilLiteral())]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_018(self):
-        """assign_statement"""
-        self.assertTrue(TestParser.test("""    
-            func VoTien() {
-                x  := foo() + 3 / 4;
-                x.c[2][4] := 1 + 2;                       
-            }                                       
-        ""","successful", 18))
+        input = """
+            func votien() {
+                a += 1;
+            }
+"""
+        # # expect = Program([FuncDecl("votien",[],VoidType(),Block([Assign(Id("a"),BinaryOp("+", Id("a"), IntLiteral(1)))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_019(self):
-        """for_statement"""
-        self.assertTrue(TestParser.test("""    
-            func VoTien() {
-                if (x > 10) {return; } 
-                if (x > 10) {
-                  return; 
-                } else if (x == 10) {
-                    var z str;
-                } else {
-                    var z ID;
-                }
-            }
-        ""","successful", 19))
-
-    def test_020(self):
-        """if_statement"""
-        self.assertTrue(TestParser.test("""    
-            func VoTien() {
-                for i < 10 {return; }
-                for i := 0; i < 10; i += 1 {return; }
-                for index, value := range array {return; }
-            }
-        ""","successful", 20))
-
-
-    def test_021(self):
-        """break and continue, return, Call  statement"""
-        self.assertTrue(TestParser.test("""    
-            func VoTien() {                           
-                for i < 10 {break;}
+        input = """
+            func votien() {
                 break;
                 continue;
-                return 1;
-                return
-                foo(2 + x, 4 / y); m.goo();                        
-             }
-                                        
-        ""","successful", 21))
-       
+            }
+"""
+        # # expect = Program([FuncDecl("votien",[],VoidType(),Block([Break(),Continue()]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
+    def test_020(self):
+        input = """
+            func votien() {
+                foo(1, 2);
+                a[2].foo(1,3);
+            }
+"""
+        # # expect = Program([FuncDecl("votien",[],VoidType(),Block([FuncCall("foo",[IntLiteral(1),IntLiteral(2)]),MethCall(ArrayCell(Id("a"),[IntLiteral(2)]),"foo",[IntLiteral(1),IntLiteral(3)])]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 20))
+
+    def test_021(self):
+        input = """
+            func votien() {
+                if(1) {return;}
+            }
+"""
+        # # expect = Program([FuncDecl("votien",[],VoidType(),Block([If(IntLiteral(1), Block([Return(None)]), None)]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_022(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            const a = 0b11;                         
-        ""","successful", 22))
+        input = """
+            func votien() {
+                if(1) {
+                    a := 1;
+                } else {
+                    a := 1;
+                }
+            }
+"""
+        # # expect = Program([FuncDecl("votien",[],VoidType(),Block([If(IntLiteral(1), Block([Assign(Id("a"),IntLiteral(1))]), Block([Assign(Id("a"),IntLiteral(1))]))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_023(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            const a = 1.;                         
-        ""","successful", 23))
+        input = """
+            func votien() {
+                if(1) { return;
+                }else if(1) {
+                    a := 1;
+                }else if(2) {
+                    a := 1;
+                }
+            }
+"""
+        # # expect = Program([FuncDecl("votien",[],VoidType(),Block([
+            # If(IntLiteral(1), Block([Return(None)]), 
+            #     If(IntLiteral(1), Block([Assign(Id("a"),IntLiteral(1))]), 
+            #         If(IntLiteral(2), Block([Assign(Id("a"),IntLiteral(1))]), None)))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 23))
+
 
     def test_024(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN 1;                         
-        ""","Error on line 2 col 25: 1", 24))
-    
+        input = """
+            func votien() {
+                for i < 10 {return;}
+                for var i = 0; i < 10; i += 1  {return;}
+            }
+"""
+        # # expect = Program([FuncDecl("votien",[],VoidType(),Block([ForBasic(BinaryOp("<", Id("i"), IntLiteral(10)),Block([Return(None)])),ForStep(VarDecl("i", None,IntLiteral(0)),BinaryOp("<", Id("i"), IntLiteral(10)),Assign(Id("i"),BinaryOp("+", Id("i"), IntLiteral(1))),Block([Return(None)]))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_025(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = int{1};                         
-        ""","Error on line 2 col 27: int", 25))
+        input = """
+            func votien() {
+                for index, value := range array[2] {return;}
+            }
+"""
+        # # expect = Program([FuncDecl("votien",[],VoidType(),Block([ForEach(Id("index"),Id("value"),ArrayCell(Id("array"),[IntLiteral(2)]),Block([Return(None)]))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 25))
 
     def test_026(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = [true]int{1};                         
-        ""","Error on line 2 col 28: true", 26))
+        input = """
+            const a = true + false - true;
+"""
+        # # expect = Program([ConstDecl("a",None,BinaryOp("-", BinaryOp("+", BooleanLiteral(True), BooleanLiteral(False)), BooleanLiteral(True)))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_027(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = []int{1};                         
-        ""","Error on line 2 col 28: ]", 27))
+        input = """
+            const a = 1 && 2 || 3;
+"""
+        # # expect = Program([ConstDecl("a",None,BinaryOp("||", BinaryOp("&&", IntLiteral(1), IntLiteral(2)), IntLiteral(3)))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_028(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = []int{1};                         
-        ""","Error on line 2 col 28: ]", 28))
+        input = """
+            const a = 1 + 2 && 3;
+"""
+        # # expect = Program([ConstDecl("a",None,BinaryOp("&&", BinaryOp("+", IntLiteral(1), IntLiteral(2)), IntLiteral(3)))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_029(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = [2]int{1;                         
-        ""","Error on line 2 col 35: ;", 29))
-    
+        input = """
+            const a = 1 - 2 % 3;
+"""
+        # # expect = Program([ConstDecl("a",None,BinaryOp("-", IntLiteral(1), BinaryOp("%", IntLiteral(2), IntLiteral(3))))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_030(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = [2]int{1,3,4;                         
-        ""","Error on line 2 col 39: ;", 30))
+        input = """
+            const a = 1 + -2 - 1;
+"""
+        # # expect = Program([ConstDecl("a",None,BinaryOp("-", BinaryOp("+", IntLiteral(1), UnaryOp("-",IntLiteral(2))), IntLiteral(1)))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_031(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = [2]int{};                         
-        ""","Error on line 2 col 34: }", 31))
+        input = """
+            const a = [1]ID{Votien{}};
+"""
+        # # expect = Program([ConstDecl("a",None,ArrayLiteral([IntLiteral(1)],Id("ID"),[StructLiteral("Votien",[])]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_032(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = ID {};                         
-        ""","successful", 32))
+        input = """
+            const a = [1][3]float{1.};
+"""
+        # # expect = Program([ConstDecl("a",None,ArrayLiteral([IntLiteral(1),IntLiteral(3)],FloatType(),[FloatLiteral(1.0)]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_033(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = ID {a: 2, b: 2 + 2 + ID {a: 1}};                         
-        ""","successful", 33))
-
+        input = """
+            const a = ID{a: 1, b: true};
+"""
+        # # expect = Program([ConstDecl("a",None,StructLiteral("ID",[("a",IntLiteral(1)),("b",BooleanLiteral(True))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+    
     def test_034(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = int {};                         
-        ""","Error on line 2 col 27: int", 34))
+        input = """
+            const a = ID{a: [1]int{1}};
+"""
+        # # expect = Program([ConstDecl("a",None,StructLiteral("ID",[("a",ArrayLiteral([IntLiteral(1)],IntType(),[IntLiteral(1)]))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
 
     def test_035(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = ID + 3;                         
-        ""","successful", 35))
-    
+        input = """
+            const a = ID{b: true};
+"""
+        # # expect = Program([ConstDecl("a",None,StructLiteral("ID",[("b",BooleanLiteral(True))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_036(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = ID {a: };                         
-        ""","Error on line 2 col 34: }", 36))
+        input = """
+            const a = 0 && 1 && 2;
+"""
+        # # expect = Program([ConstDecl("a",None,BinaryOp("&&", BinaryOp("&&", IntLiteral(0), IntLiteral(1)), IntLiteral(2)))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_037(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = 1 && 2 && 3 || 1 || 1;                         
-        ""","successful", 37))
-    
+        input = """
+            const a = 0 || 1 || 2;
+"""
+        # # expect = Program([ConstDecl("a",None,BinaryOp("||", BinaryOp("||", IntLiteral(0), IntLiteral(1)), IntLiteral(2)))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_038(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = a >= 2 <= "string" > a[2][3] < ID{A: 2} >= [2]S{2};                         
-        ""","successful", 38))
+        input = """
+            const a = 0 >= 1 <= 2;
+"""
+        # # expect = Program([ConstDecl("a",None,BinaryOp("<=", BinaryOp(">=", IntLiteral(0), IntLiteral(1)), IntLiteral(2)))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_039(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = a + b - [2]int{2} + c - z;                         
-        ""","successful", 39))
+        input = """
+            const a = 0 + 1 - 2;
+"""
+        # # expect = Program([ConstDecl("a",None,BinaryOp("-", BinaryOp("+", IntLiteral(0), IntLiteral(1)), IntLiteral(2)))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_040(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = a * b / d % e * 2;                         
-        ""","successful", 40))
+        input = """
+            const a = 0 * 1 / 2;
+"""
+        # # expect = Program([ConstDecl("a",None,BinaryOp("/", BinaryOp("*", IntLiteral(0), IntLiteral(1)), IntLiteral(2)))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_041(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = a.b.a.c.e.g;                         
-        ""","successful", 41))
+        input = """
+            const a = !-!2;
+"""
+        # # expect = Program([ConstDecl("a",None,UnaryOp("!",UnaryOp("-",UnaryOp("!",IntLiteral(2)))))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_042(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = a[2][3][a + 2];                         
-        ""","successful", 42))
+        input = """
+            const a = 1 && 2 || 3 >= 4 + 5 * -6;
+"""
+        # # expect = Program([ConstDecl("a",None,BinaryOp("||", BinaryOp("&&", IntLiteral(1), IntLiteral(2)), BinaryOp(">=", IntLiteral(3), BinaryOp("+", IntLiteral(4), BinaryOp("*", IntLiteral(5), UnaryOp("-",IntLiteral(6)))))))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_043(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = a[2, 3];                         
-        ""","Error on line 2 col 30: ,", 43))
+        input = """
+            const a = 1 > 2 < 3 >= 4 <=5 == 6;
+"""
+        # # expect = Program([ConstDecl("a",None,BinaryOp("==", BinaryOp("<=", BinaryOp(">=", BinaryOp("<", BinaryOp(">", IntLiteral(1), IntLiteral(2)), IntLiteral(3)), IntLiteral(4)), IntLiteral(5)), IntLiteral(6)))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_044(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = a[];                         
-        ""","Error on line 2 col 29: ]", 44))
+        input = """
+            const a = 1 >= 2 + 3;
+"""
+        # # expect = Program([ConstDecl("a",None,BinaryOp(">=", IntLiteral(1), BinaryOp("+", IntLiteral(2), IntLiteral(3))))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_045(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = a.a.a[2].foo();                         
-        ""","successful", 45))
+        input = """
+            const a = a[1][2][3][4];
+"""
+        # # expect = Program([ConstDecl("a",None,ArrayCell(Id("a"),[IntLiteral(1),IntLiteral(2),IntLiteral(3),IntLiteral(4)]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_046(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = a.a.a[2].foo(1);                         
-        ""","successful", 46))
+        input = """
+            const a = a[1 + 2];
+"""
+        # # expect = Program([ConstDecl("a",None,ArrayCell(Id("a"),[BinaryOp("+", IntLiteral(1), IntLiteral(2))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_047(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = a.a.a[2].c[2].foo(1, a.b);                         
-        ""","successful", 47))
+        input = """
+            const a = a.b.c.d.e;
+"""
+        # # expect = Program([ConstDecl("a",None,FieldAccess(FieldAccess(FieldAccess(FieldAccess(Id("a"),"b"),"c"),"d"),"e"))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_048(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = a.a.a[2].c[2].foo(1,);                         
-        ""","Error on line 2 col 47: )", 48))
+        input = """
+            const a = ID {}.a;
+"""
+        # # expect = Program([ConstDecl("a",None,FieldAccess(StructLiteral("ID",[]),"a"))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_049(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = foo() + foo(2) + foo(2, 3, 4) + a;                         
-        ""","successful", 49))
+        input = """
+            const a = ID {}.a[2];
+"""
+        # # expect = Program([ConstDecl("a",None,ArrayCell(FieldAccess(StructLiteral("ID",[]),"a"),[IntLiteral(2)]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_050(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = (a + 23) * 3 && (1 + 1);                         
-        ""","successful", 50))
+        input = """
+            const a = a.b().c().d();
+"""
+        # # expect = Program([ConstDecl("a",None,MethCall(MethCall(MethCall(Id("a"),"b",[]),"c",[]),"d",[]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_051(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            var z VOTIEN = foo().a[2].goo();                         
-        ""","successful", 51))
+        input = """
+            const a = a().d();
+"""
+        # # expect = Program([ConstDecl("a",None,MethCall(FuncCall("a",[]),"d",[]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_052(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            const k = [2]int{1}[3][4].foo();                         
-        ""","successful", 52))
-
+        input = """
+            const a = a[1].b.c()[2].d.e();
+"""
+        # # expect = Program([ConstDecl("a",None,MethCall(FieldAccess(ArrayCell(MethCall(FieldAccess(ArrayCell(Id("a"),[IntLiteral(1)]),"b"),"c",[]),[IntLiteral(2)]),"d"),"e",[]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+    
     def test_053(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            const k = ID {a : 2}.c[2] + 2[2] + true.foo() + (2).foo();                         
-        ""","successful", 53))
+        input = """
+            const a = a * (nil - "a");
+"""
+        # # expect = Program([ConstDecl("a",None,BinaryOp("*", Id("a"), BinaryOp("-", NilLiteral(), StringLiteral("\"a\""))))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_054(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            const k = -a + -!-!c - ---[2]int{2};                         
-        ""","successful", 54))
+        input = """
+            const a = f() + f(1 + 2, 3.);
+"""
+        # # expect = Program([ConstDecl("a",None,BinaryOp("+", FuncCall("f",[]), FuncCall("f",[BinaryOp("+", IntLiteral(1), IntLiteral(2)),FloatLiteral(3.0)])))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_055(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            const k = foo() + foo(a{a:2}) + foo(2, 3,4);                         
-        ""","successful", 55))
+        input = """
+            const a = foo()[2];
+"""
+        # # expect = Program([ConstDecl("a",None,ArrayCell(FuncCall("foo",[]),[IntLiteral(2)]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_056(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            const k =  int;                         
-        ""","Error on line 2 col 23: int", 56))
+        input = """
+            const a = a;
+"""
+        # # expect = Program([ConstDecl("a",None,Id("a"))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_057(self):
-        """Expressions"""
-        self.assertTrue(TestParser.test("""    
-            const k =  (1, 2);                         
-        ""","Error on line 2 col 25: ,", 57))
+        input = """
+            var a Votien = 1.;
+"""
+        # # expect = Program([VarDecl("a",Id("Votien"),FloatLiteral(1.0))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_058(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            var a VOTIEN = 2 + 3 / 4;
-        ""","successful", 58))
-
+        "thêm type array vào AST anh có thông bao trong nhóm task 3"
+        input = """
+            var a [2][3]int;
+"""
+        # # expect = Program([VarDecl("a",ArrayType([IntLiteral(2),IntLiteral(3)],IntType()), None)
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+    
     def test_059(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            var a [2][3]int = 2 + 3 / 4;
-        ""","successful", 59))
+        input = """
+            var a = 1;
+"""
+        # # expect = Program([VarDecl("a", None,IntLiteral(1))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_060(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            var a [][3]int = 2 + 3 / 4;
-        ""","Error on line 2 col 19: ]", 60))
-
+        input = """
+            type Votien struct {
+                a int;
+            }
+"""
+        # # expect = Program([StructType("Votien",[("a",IntType())],[])
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+    
     def test_061(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            var a = a.foo()[2];
-        ""","successful", 61))
+        input = """
+            type Votien struct {
+                a int;
+            }
+"""
+        # # expect = Program([StructType("Votien",[("a",IntType())],[])
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_062(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            var a = ;
-        ""","Error on line 2 col 20: ;", 62))
+        input = """
+            type Votien struct {
+                a  int;
+                b  boolean;
+                
+            }
+"""
+        # # expect = Program([StructType("Votien",[("a",IntType()),("b",BoolType())],[])
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_063(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            var a 1;
-        ""","Error on line 2 col 18: 1", 63))
+        input = """
+            type Votien struct {
+                a  int;
+                b  boolean;
+                c  [2]Votien;
+            }
+"""
+        # # expect = Program([StructType("Votien",[("a",IntType()),("b",BoolType()),("c",ArrayType([IntLiteral(2)],Id("Votien")))],[])
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_064(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            var c [2][3]int;
-        ""","successful", 64))
+        input = """
+            type Votien interface {
+                Add() ;
+            }
+"""
+        # # expect = Program([InterfaceType("Votien",[Prototype("Add",[],VoidType())])
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_065(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            var c [2][3]ID
-        ""","successful", 65))
+        input = """
+            type Votien interface {
+                Add(a int) ;
+            }
+"""
+        # # expect = Program([InterfaceType("Votien",[Prototype("Add",[IntType()],VoidType())])
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_066(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            const a;
-        ""","Error on line 2 col 19: ;", 66))
+        input = """
+            type Votien interface {
+                Add(a int, b int) ;
+            }
+"""
+        # # expect = Program([InterfaceType("Votien",[Prototype("Add",[IntType(),IntType()],VoidType())])
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_067(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            const a := 1 + foo.a[2];
-        ""","Error on line 2 col 20: :=", 67))
+        input = """
+            type Votien interface {
+                Add(a, c int, b int) ;
+            }
+"""
+        # # expect = Program([InterfaceType("Votien",[Prototype("Add",[IntType(),IntType(),IntType()],VoidType())])
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_068(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            const a =;
-        ""","Error on line 2 col 21: ;", 68))
+        input = """
+            type Votien interface {
+                Add(a, c int, b int) [2]string;
+            }
+"""
+        # # expect = Program([InterfaceType("Votien",[Prototype("Add",[IntType(),IntType(),IntType()],ArrayType([IntLiteral(2)],StringType()))])
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_069(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            
-            var a int; var d = 2;
-                                        
-            var d = 2;
-                                        
-            const a = 2; var d int = 3;
-                                        
-            
-            var d = 2;""","successful", 69))
-        
+        input = """
+            type Votien interface {
+                Add() [2]string;
+                Add() ID;
+            }
+"""
+        # # expect = Program([InterfaceType("Votien",[Prototype("Add",[],ArrayType([IntLiteral(2)],StringType())),Prototype("Add",[],Id("ID"))])
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_070(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            func Add(x int, y [2]int) [2]id {return ;}
-""","successful", 70))
-        
+        input = """
+            type Votien interface {
+                Add();
+            }
+"""
+        # # expect = Program([InterfaceType("Votien",[Prototype("Add",[],VoidType())])
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
+
     def test_071(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            func Add() [2]id {return ;}
-""","successful", 71))
-        
+        input = """
+            func foo() {return;}
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([Return(None)]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_072(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            func Add(a) [2]id {return ;}
-""","Error on line 2 col 22: )", 72))
-        
+        input = """
+            func foo(a [2]ID) {return;}
+"""
+        # # expect = Program([FuncDecl("foo",[ParamDecl("a",ArrayType([IntLiteral(2)],Id("ID")))],VoidType(),Block([Return(None)]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
+
     def test_073(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            func Add(int a) int {return ;}
-""","Error on line 2 col 21: int", 73))
-        
+        input = """
+            func foo(a int, b [1]int) {return;}
+"""
+        # # expect = Program([FuncDecl("foo",[ParamDecl("a",IntType()),ParamDecl("b",ArrayType([IntLiteral(1)],IntType()))],VoidType(),Block([Return(None)]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_074(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            func Add() {return ;}
-""","successful", 74))
-        
+        input = """
+            func foo() [2]int {return;}
+"""
+        # # expect = Program([FuncDecl("foo",[],ArrayType([IntLiteral(2)],IntType()),Block([Return(None)]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_075(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            func Add(a int, ) {}
-""","Error on line 2 col 28: )", 75))
-        
+        input = """
+            func (Cat c) foo() {return;}
+"""
+        # # expect = Program([MethodDecl("Cat",Id("c"),FuncDecl("foo",[],VoidType(),Block([Return(None)])))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_076(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            type Calculator struct {value int}
-""","Error on line 2 col 45: }", 76))
-        
+        input = """
+            func  (Cat c) foo(a [2]ID) {return;}
+"""
+        # # expect = Program([MethodDecl("Cat",Id("c"),FuncDecl("foo",[ParamDecl("a",ArrayType([IntLiteral(2)],Id("ID")))],VoidType(),Block([Return(None)])))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
+
     def test_077(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            type Calculator struct {value int;}
-""","successful", 77))
-        
+        input = """
+            func  (Cat c) foo(a int, b [1]int) {return;}
+"""
+        # # expect = Program([MethodDecl("Cat",Id("c"),FuncDecl("foo",[ParamDecl("a",IntType()),ParamDecl("b",ArrayType([IntLiteral(1)],IntType()))],VoidType(),Block([Return(None)])))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_078(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            type Calculator struct {
-                                        
-                value int;
-                a [2]int; a [2]ID;
-                c Calculator                    
-            }
-""","successful", 78))
-        
+        input = """
+            func  (Cat c) foo() [2]int {return;}
+"""
+        # # expect = Program([MethodDecl("Cat",Id("c"),FuncDecl("foo",[],ArrayType([IntLiteral(2)],IntType()),Block([Return(None)])))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_079(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            type Calculator struct {
-                c Calculator
-                c Cal a int;         
-            }
-""","Error on line 4 col 22: a", 79))
-        
+        input = """
+            var a = 1;
+            const b = 2;
+            type a struct{a float;}
+            type b interface {foo();} 
+            func foo(){return;}
+            func  (Cat c) foo() [2]int {return;}
+"""
+        # # expect = Program([VarDecl("a", None,IntLiteral(1)),
+		# 	ConstDecl("b",None,IntLiteral(2)),
+		# 	StructType("a",[("a",FloatType())],[]),
+		# 	InterfaceType("b",[Prototype("foo",[],VoidType())]),
+		# 	FuncDecl("foo",[],VoidType(),Block([Return(None)])),
+		# 	MethodDecl("Cat",Id("c"),FuncDecl("foo",[],ArrayType([IntLiteral(2)],IntType()),Block([Return(None)])))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_080(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            type Calculator struct {
-                a int = 2;       
-            }
-""","Error on line 3 col 22: =", 80))
-        
+        input = """
+            func foo(a,b,c,d [ID][2][c] ID ){return;}
+"""
+        # # expect = Program([FuncDecl("foo",[ParamDecl("a",ArrayType([Id("ID"),IntLiteral(2),Id("c")],Id("ID"))),ParamDecl("b",ArrayType([Id("ID"),IntLiteral(2),Id("c")],Id("ID"))),ParamDecl("c",ArrayType([Id("ID"),IntLiteral(2),Id("c")],Id("ID"))),ParamDecl("d",ArrayType([Id("ID"),IntLiteral(2),Id("c")],Id("ID")))],VoidType(),Block([Return(None)]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_081(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            type Calculator interface {
-                Add(x, y [2]ID) [2]int;
-                Subtract(a, b float, c, e int);
-                Reset()
-                SayHello(name string)
-            }
-""","successful", 81))
-        
+        input = """
+            func foo(){
+                const a = 1.;
+            } 
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([ConstDecl("a",None,FloatLiteral(1.0))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
+
     def test_082(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            type Calculator interface {Reset()}
-""","Error on line 2 col 46: }", 82))
-        
+        input = """
+            func foo(){
+                var a = 1.;
+            } 
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([VarDecl("a", None,FloatLiteral(1.0))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_083(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            type Calculator interface {Reset()
-        }
-""","successful", 83))
-        
+        input = """
+            func foo(){
+                var a [1]int = 1;
+            } 
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([VarDecl("a",ArrayType([IntLiteral(1)],IntType()),IntLiteral(1))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_084(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            type Calculator interface {Reset();}
-""","successful", 84))
-        
+        input = """
+            func foo(){
+                var a int;
+            } 
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([VarDecl("a",IntType(), None)]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_085(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            type Calculator interface {
-                Add(x int,c,d ID); Add()
-        }
-""","successful", 85))
-        
+        input = """
+            func foo(){
+                a += 1;
+                a -= 1;
+                a *= 1;
+                a /= 1;
+                a %= 1;
+            } 
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([Assign(Id("a"),BinaryOp("+", Id("a"), IntLiteral(1))),Assign(Id("a"),BinaryOp("-", Id("a"), IntLiteral(1))),Assign(Id("a"),BinaryOp("*", Id("a"), IntLiteral(1))),Assign(Id("a"),BinaryOp("/", Id("a"), IntLiteral(1))),Assign(Id("a"),BinaryOp("%", Id("a"), IntLiteral(1)))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_086(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            type Calculator interface {
-                Add(x int,c,d ID){}
-        }
-""","Error on line 3 col 33: {", 86))
-        
+        input = """
+            func foo(){
+                a[1 + 1] := 1;
+            } 
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([Assign(ArrayCell(Id("a"),[BinaryOp("+", IntLiteral(1), IntLiteral(1))]),IntLiteral(1))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_087(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            type Calculator interface {Reset();} type Person struct{value int;}
-""","Error on line 2 col 49: type", 87))
-        
+        input = """
+            func foo(){
+                a[2].b.c[2] := 1;
+            } 
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([Assign(ArrayCell(FieldAccess(FieldAccess(ArrayCell(Id("a"),[IntLiteral(2)]),"b"),"c"),[IntLiteral(2)]),IntLiteral(1))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_088(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            type Calculator interface {Reset();}; type Person struct{value int;}
-""","successful", 88))
-        
+        input = """
+            func foo(){
+                a["s"][foo()] := a[2][2][3];
+                a[2] := a[3][4];
+                b.c.a[2] := b.c.a[2];
+                b.c.a[2][3] := b.c.a[2][3];
+            } 
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([
+        #     Assign(ArrayCell(Id("a"),[StringLiteral("\"s\""),FuncCall("foo",[])]),ArrayCell(Id("a"),[IntLiteral(2),IntLiteral(2),IntLiteral(3)])),
+        #     Assign(ArrayCell(Id("a"),[IntLiteral(2)]),ArrayCell(Id("a"),[IntLiteral(3),IntLiteral(4)])),
+        #     Assign(ArrayCell(FieldAccess(FieldAccess(Id("b"),"c"),"a"),[IntLiteral(2)]),ArrayCell(FieldAccess(FieldAccess(Id("b"),"c"),"a"),[IntLiteral(2)])),
+        #     Assign(ArrayCell(FieldAccess(FieldAccess(Id("b"),"c"),"a"),[IntLiteral(2),IntLiteral(3)]),ArrayCell(FieldAccess(FieldAccess(Id("b"),"c"),"a"),[IntLiteral(2),IntLiteral(3)]))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_089(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""    
-            func Add(x int, y int) int  {return ;};
-""","successful", 89))
-        
+        input = """
+            func foo(){
+                a.b := 1;
+            } 
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([Assign(FieldAccess(Id("a"),"b"),IntLiteral(1))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_090(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""
-            func (c Calculator) Add(x int) int {return ;}
-""","successful", 90))
-        
+        input = """
+            func foo(){
+                a.b[2].c := 1;
+            } 
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([Assign(FieldAccess(ArrayCell(FieldAccess(Id("a"),"b"),[IntLiteral(2)]),"c"),IntLiteral(1))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_091(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""
-            func (c int) Add(x int) int {return ;}
-""","Error on line 2 col 20: int", 91))
-        
+        input = """
+            func foo(){
+                break;
+                continue;
+            } 
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([Break(),Continue()]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_092(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""
-            func (c c) Add(x int) {return ;}
-""","successful", 92))
-        
+        input = """
+            func foo(){
+                return;
+                return foo() + 2;
+            } 
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([Return(None),Return(BinaryOp("+", FuncCall("foo",[]), IntLiteral(2)))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_093(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""
-            func (c c) Add(x, c int) {return ;}
-""","successful", 93))
-        
+        input = """
+            func foo(){
+                foo();
+                foo(foo(), 2);
+                a.foo();
+                a[2].c.foo(foo(), 2);
+            } 
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([FuncCall("foo",[]),FuncCall("foo",[FuncCall("foo",[]),IntLiteral(2)]),MethCall(Id("a"),"foo",[]),MethCall(FieldAccess(ArrayCell(Id("a"),[IntLiteral(2)]),"c"),"foo",[FuncCall("foo",[]),IntLiteral(2)])]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 93))
+
     def test_094(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""
-            func (c [2]c) Add(x int) {return ;}
-""","Error on line 2 col 20: [", 94))
-        
+        input = """
+            func foo(){
+                if(1) {return;}
+                if(1 + 1) {
+                    return 1;
+                    return;
+                }
+            } 
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([
+            # If(IntLiteral(1), Block([Return(None)]), None),
+            # If(BinaryOp("+", IntLiteral(1), IntLiteral(1)), Block([Return(IntLiteral(1)),Return(None)]), None)]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_095(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""
-            func (int c) Add(x int) {return ;}
-""","Error on line 2 col 18: int", 95))
-        
+        input = """
+            func foo(){
+                if(1) { return;
+                }else if(1) {
+                    return 1;
+                    return ;
+                } else {return;}
+
+                if(1) {return;
+                }  else {
+                    return 1;
+                    return ;
+                }
+
+            } 
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([
+        #     If(IntLiteral(1), Block([Return(None)]), 
+        #         If(IntLiteral(1), Block([Return(IntLiteral(1)),Return(None)]), Block([Return(None)]))),
+        #     If(IntLiteral(1), Block([Return(None)]), Block([Return(IntLiteral(1)),Return(None)]))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 95))
+
     def test_096(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""
-            func (c c) Add(x int) {return ;};
-""","successful", 96))
-        
+        input = """
+            func foo(){
+                if(1) {
+                    return 1;
+                }else if(2) {
+                    return 2;
+                } else if(3) {
+                    return 3;
+                } else if(4) {
+                    return 4;
+                } 
+
+            } 
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([
+        #     If(IntLiteral(1), Block([Return(IntLiteral(1))]), 
+        #         If(IntLiteral(2), Block([Return(IntLiteral(2))]), 
+        #             If(IntLiteral(3), Block([Return(IntLiteral(3))]), 
+        #                 If(IntLiteral(4), Block([Return(IntLiteral(4))]), None))))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 96))
+
     def test_097(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""
-                                        
-            func (c c) Add(x int) {return ;}
-                                        
-            func Add(x int) {return ;}; var c int;
-                                        
-            var c int; type Calculator struct{c int;}; type Calculator struct{c int;} var c int;
-""","Error on line 7 col 86: var", 97))
-        
+        input = """
+            func votien() {
+                for a.i[8] {
+                    return;
+                    return 1;
+                }
+                for i := 0; i[1] < 10; i *= 2+3  {
+                    return;
+                    return 1;
+                }
+            }
+"""
+        # # expect = Program([FuncDecl("votien",[],VoidType(),Block([ForBasic(ArrayCell(FieldAccess(Id("a"),"i"),[IntLiteral(8)]),Block([Return(None),Return(IntLiteral(1))])),ForStep(Assign(Id("i"),IntLiteral(0)),BinaryOp("<", ArrayCell(Id("i"),[IntLiteral(1)]), IntLiteral(10)),Assign(Id("i"),BinaryOp("*", Id("i"), BinaryOp("+", IntLiteral(2), IntLiteral(3)))),Block([Return(None),Return(IntLiteral(1))]))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_098(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""
-                                        
-            var c int func (c c) Add(x int) {return ;}
-""","Error on line 3 col 22: func", 98))
-        
+        input = """
+            func votien() {
+                for index, value := range [2]int{1,2} {
+                     return;
+                    return 1;
+                }
+            }
+"""
+        # # expect = Program([FuncDecl("votien",[],VoidType(),Block([ForEach(Id("index"),Id("value"),ArrayLiteral([IntLiteral(2)],IntType(),[IntLiteral(1),IntLiteral(2)]),Block([Return(None),Return(IntLiteral(1))]))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_099(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""
-                                        
-            const a = 2 func (c c) Add(x int) {return ;}
-""","Error on line 3 col 24: func", 99))
-        
+        input = """
+            func votien() {
+                a.b.c[2].d()
+            }
+"""
+        # # expect = Program([FuncDecl("votien",[],VoidType(),Block([MethCall(ArrayCell(FieldAccess(FieldAccess(Id("a"),"b"),"c"),[IntLiteral(2)]),"d",[])]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 99))
+
     def test_100(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""
-                                        
-            const MaxSize = 100 + 50; func (c c) Add() {return ;}
-""","successful", 100))
-        
+        input = """
+            func votien() {
+                return [2] ID { {1}, {"2"}, {nil}, {struc{}} };
+                return "THANKS YOU, PPL1 ";
+            };
+"""
+        # # expect = Program([FuncDecl("votien",[],VoidType(),Block([Return(ArrayLiteral([IntLiteral(2)],Id("ID"),[[IntLiteral(1)],[StringLiteral("2")],[NilLiteral()],[StructLiteral("struc",[])]])),Return(StringLiteral("\"THANKS YOU, PPL1 \""))]))
+
+        self.assertTrue(TestParser.test(input, "successful", 1))
     def test_101(self):
-        """Declared"""
-        self.assertTrue(TestParser.test("""
-                                        
-""","Error on line 3 col 0: <EOF>", 101))
-        
+        input = """const VoTien = 1; """
+        # # expect = Program([ConstDecl("VoTien", None, IntLiteral(1))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_102(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-            func Add() {
-                                        }
-""","successful", 102))
-        
+        """ chuyển đổi sang kiểu int hết """
+        input = """const VoTien = 0b11; """
+        # # expect = Program([ConstDecl("VoTien", None, IntLiteral(3))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_103(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                         var a int = 2;      
-                                    };""","successful", 103))
+        input = """const VoTien = 0o70; """
+        # # expect = Program([ConstDecl("VoTien", None, IntLiteral(56))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_104(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                         var a int;      
-                                    };""","successful", 104))
-        
+        input = """const VoTien = 0Xa1; """
+        # # expect = Program([ConstDecl("VoTien", None, IntLiteral(161))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_105(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                         var a = a[2].b;      
-                                    };""","successful", 105))
-        
+        input = """const VoTien = 01.e-1; """
+        # # expect = Program([ConstDecl("VoTien", None, FloatLiteral(0.1))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_106(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                         const a = a[2].b;      
-                                    };""","successful", 106))
-        
+        """ đầu vào là giá trị True False chứ không phải string """
+        input = """const VoTien = true; """
+        # # expect = Program([ConstDecl("VoTien", None, BooleanLiteral(True))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_107(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        const a = a[2].b
-                                        var a = a[2].b; var a = "s";           
-                                    };""","successful", 107))
-        
+        input = """const VoTien = false; """
+        # # expect = Program([ConstDecl("VoTien", None, BooleanLiteral(False))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_108(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        const a = a[2].b
-                                        var a = a[2].b var a = "s";           
-                                    };""","Error on line 4 col 55: var", 108))
+        """ loại bỏ "" ở trước và sau string """
+        input = """const VoTien = "votien"; """
+        # # expect = Program([ConstDecl("VoTien", None, StringLiteral("\"votien\""))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_109(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        a += 2;
-                                        a -= a[2].b();
-                                        a /= 2
-                                        a *= 2
-                                        a %= 2;       
-                                    };""","successful", 109))
-        
-
+        input = """const VoTien = nil; """
+        # # expect = Program([ConstDecl("VoTien", None, NilLiteral())])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+    
     def test_110(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        a[2].b := 2;       
-                                    };""","successful", 110))
-        
+        input = """const VoTien = STRUCT {}; """
+        # # expect = Program([ConstDecl("VoTien", None, StructLiteral("STRUCT",[]))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_111(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        a.c[2].e[3].k += 2;       
-                                    };""","successful", 111))
+        input = """const VoTien = STRUCT {
+            a : 1,
+            b : false}; """
+        # # expect = Program([ConstDecl("VoTien", None, StructLiteral("STRUCT",[("a",IntLiteral(1)),("b",BooleanLiteral(False))]))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_112(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        a.foo() += 2;       
-                                    };""","Error on line 3 col 48: +=", 112))
+        input = """const VoTien = [ID] int {1}; """
+        # # expect = Program([ConstDecl("VoTien", None, ArrayLiteral([Id("ID")],IntType(),[IntLiteral(1)]))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
     def test_113(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        2 + 2 += 2;       
-                                    };""","Error on line 3 col 40: 2", 113))
-        
-    def test_114(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                       ID {id:2}.c += 2;       
-                                    };""","Error on line 3 col 42: {", 114))
-        
-    def test_115(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                       a[2+3&&2] += foo().b[2];       
-                                    };""","successful", 115))
-        
-    def test_116(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        if (x.foo().b[2]) {
-                                            a := 2;
-                                        } else if (a && b) {
-                                            return; 
-                                        } else {
-                                            a := 2;
-                                        }   
-                                    };""","successful", 116))
-        
-    def test_117(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        if (x.foo().b[2]) {
-                                            if (){return;}
-                                        } 
-                                    };""","Error on line 4 col 48: )", 117))
-        
-    def test_118(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        if (x.foo().b[2]) {
-                                            if (1){return; } else {return; }
+        input = """const VoTien = [1][2] int {1., STRUCT{}, nil}; """
+        # # expect = Program([ConstDecl("VoTien", None, ArrayLiteral([IntLiteral(1),IntLiteral(2)],IntType(),[FloatLiteral(1.0),StructLiteral("STRUCT",[]),NilLiteral()]))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
 
-                                        } else if(2) {return; 
-                                        }
-                                    };""","successful", 118))
-        
+    def test_114(self):
+        input = """const VoTien = [1][2] STRUCT {{1, {3}}, {2}}; """
+        # # expect = Program([ConstDecl("VoTien", None, ArrayLiteral([IntLiteral(1),IntLiteral(2)],Id("STRUCT"),[[IntLiteral(1), [IntLiteral(3)]],[IntLiteral(2)]]))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
+    def test_115(self):
+        input = """const VoTien = 1 || 2 || 3; """
+        # # expect = Program([ConstDecl("VoTien", None, BinaryOp("||", BinaryOp("||", IntLiteral(1), IntLiteral(2)), IntLiteral(3)))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
+    def test_116(self):
+        input = """const VoTien = 1 && 2 && 3; """
+        # # expect = Program([ConstDecl("VoTien", None, BinaryOp("&&", BinaryOp("&&", IntLiteral(1), IntLiteral(2)), IntLiteral(3)))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
+    def test_117(self):
+        input = """const VoTien = 1 >= 2 <= 3 > 4 < 5 == 6 != 7; """
+        # # expect = Program([ConstDecl("VoTien", None, BinaryOp("!=", BinaryOp("==", BinaryOp("<", BinaryOp(">", BinaryOp("<=", BinaryOp(">=", IntLiteral(1), IntLiteral(2)), IntLiteral(3)), IntLiteral(4)), IntLiteral(5)), IntLiteral(6)), IntLiteral(7)))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+    
+    def test_118(self):
+        input = """const VoTien = 1 + 2 - 3; """
+        # # expect = Program([ConstDecl("VoTien", None, BinaryOp("-", BinaryOp("+", IntLiteral(1), IntLiteral(2)), IntLiteral(3)))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_119(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        if (x.foo().b[2]) {return
-                                        } else if(){
-                                        }
-                                    };""","Error on line 4 col 50: )", 119))
-        
+        input = """const VoTien = 1 * 2 / 3 % 4; """
+        # # expect = Program([ConstDecl("VoTien", None, BinaryOp("%", BinaryOp("/", BinaryOp("*", IntLiteral(1), IntLiteral(2)), IntLiteral(3)), IntLiteral(4)))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_120(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        if (x.foo().b[2]) {return; 
-                                        } else if(1){return; 
-                                        }else if(1){return; 
-                                        }else if(2){return
-                                        }else {return; 
-                                        }
-                                    };""","successful", 120))
-        
+        input = """const VoTien = ! - 1; """
+        # # expect = Program([ConstDecl("VoTien", None, UnaryOp("!",UnaryOp("-",IntLiteral(1))))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_121(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        for true {return; }
-                                    };""","successful", 121))
-        
+        input = """const VoTien = a; """
+        # # expect = Program([ConstDecl("VoTien", None, Id("a"))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_122(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        for true + 2 + foo().b {return; }
-                                    };""","successful", 122))
-        
+        input = """const VoTien = (1+2)*3; """
+        # # expect = Program([ConstDecl("VoTien", None, BinaryOp("*", BinaryOp("+", IntLiteral(1), IntLiteral(2)), IntLiteral(3)))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_123(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        for int {return; }
-                                    };""","Error on line 3 col 44: int", 123))
-        
+        input = """const VoTien = foo(); """
+        # # expect = Program([ConstDecl("VoTien", None, FuncCall("foo",[]))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_124(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        for int {return; }
-                                    };""","Error on line 3 col 44: int", 124))
-        
+        input = """const VoTien = foo(1, 2); """
+        # # expect = Program([ConstDecl("VoTien", None, FuncCall("foo",[IntLiteral(1),IntLiteral(2)]))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_125(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        for i := 0; i < 10; i += 1 {
-                                           return; 
-                                        }
-                                    };""","successful", 125))
-        
+        input = """const VoTien = a[2][3]; """
+        # # expect = Program([ConstDecl("VoTien",None,ArrayCell(Id("a"),[IntLiteral(2),IntLiteral(3)]))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_126(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        for var i = 0; i < 10; i += 1 {
-                                           return; 
-                                        }
-                                    };""","successful", 126))
-        
+        input = """const VoTien = a.b.c; """
+        # # expect = Program([ConstDecl("VoTien", None, FieldAccess(FieldAccess(Id("a"),"b"),"c"))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_127(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        for const i = 0; i < 10; i += 1 {
-                                            return; 
-                                        }
-                                    };""","Error on line 3 col 44: const", 127))
-        
+        input = """const VoTien = a.b().c(1, 2); """
+        # # expect = Program([ConstDecl("VoTien", None, MethCall(MethCall(Id("a"),"b",[]),"c",[IntLiteral(1),IntLiteral(2)]))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_128(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        for var i [2] int = 0; foo().a.b(); i[3] := 1 {
-                                            return; 
-                                        }
-                                    };""","Error on line 3 col 77: [", 128))
-        
+        input = """const VoTien = a.b[2].c.d(); """
+        # # expect = Program([ConstDecl("VoTien", None, MethCall(FieldAccess(ArrayCell(FieldAccess(Id("a"),"b"),[IntLiteral(2)]),"c"),"d",[]))])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_129(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        for var i [2]int = 0; foo().a.b();  {
-                                            return; 
-                                        }
-                                    };""","Error on line 3 col 76: {", 129))
-        
+        input = """
+    var a int = 1;
+    var a float = 1;
+    var a boolean;
+    var a string = 1;
+    var a = 1;
+    var a ID = 1;
+    var a [ID][1] int = 1;
+"""
+        # # expect = Program([VarDecl("a",IntType(),IntLiteral(1)),
+			# VarDecl("a",FloatType(),IntLiteral(1)),
+			# VarDecl("a",BoolType(), None),
+			# VarDecl("a",StringType(),IntLiteral(1)),
+			# VarDecl("a", None,IntLiteral(1)),
+			# VarDecl("a",Id("ID"),IntLiteral(1)),
+			# VarDecl("a",ArrayType([Id("ID"),IntLiteral(1)],IntType()),IntLiteral(1))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
+
     def test_130(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        for var i [2]int = 0; foo().a.b(); var i [2]int = 0 {
-                                            return; 
-                                        }
-                                    };""","Error on line 3 col 75: var", 130))
-        
+        input = """
+    const a = 1;
+"""
+        # # expect = Program([ConstDecl("a",None,IntLiteral(1))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_131(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        for index, value := range arr {
-                                        // index: 0, 1, 2
-                                        // value: 10, 20, 30
-                                        return; 
-                                        }
-                                    };""","successful", 131))
-        
+        input = """
+    type ID struct {
+        a int;
+        b ID;
+        c [2]int;
+    }
+"""
+        # # expect = Program([StructType("ID",[("a",IntType()),("b",Id("ID")),("c",ArrayType([IntLiteral(2)],IntType()))],[])
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_132(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        for index[2], value := range arr {
-                                        // index: 0, 1, 2
-                                        // value: 10, 20, 30
-                                        return; 
-                                        }
-                                    };""","Error on line 3 col 52: ,", 132))
-        
+        input = """
+    func foo () {var a = 1;}
+    func foo () int {var a = 1;}
+    func foo () [2] ID {var a = 1;}
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([VarDecl("a", None,IntLiteral(1))])),
+			# FuncDecl("foo",[],IntType(),Block([VarDecl("a", None,IntLiteral(1))])),
+			# FuncDecl("foo",[],ArrayType([IntLiteral(2)],Id("ID")),Block([VarDecl("a", None,IntLiteral(1))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_133(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        for index.ab, value := range arr {
-                                        // index: 0, 1, 2
-                                        // value: 10, 20, 30
-                                        return; 
-                                        }
-                                    };""","Error on line 3 col 52: ,", 133))
-        
+        input = """
+    func foo (a int) {var a = 1;}
+    func foo (a int, b ID) {var a = 1;}
+    func foo (a, b int) {var a = 1;}
+"""
+        # # expect = Program([FuncDecl("foo",[ParamDecl("a",IntType())],VoidType(),Block([VarDecl("a", None,IntLiteral(1))])),
+		# 	FuncDecl("foo",[ParamDecl("a",IntType()),ParamDecl("b",Id("ID"))],VoidType(),Block([VarDecl("a", None,IntLiteral(1))])),
+		# 	FuncDecl("foo",[ParamDecl("a",IntType()),ParamDecl("b",IntType())],VoidType(),Block([VarDecl("a", None,IntLiteral(1))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
+
+    def test_133(self):
+        input = """
+    func (ID ID) foo () {var a = 1;}
+    func (ID ID) foo () int {var a = 1;}
+    func (ID ID) foo () [2] ID {var a = 1;}
+"""
+        # # expect = Program([MethodDecl("ID",Id("ID"),FuncDecl("foo",[],VoidType(),Block([VarDecl("a", None,IntLiteral(1))]))),
+		# 	MethodDecl("ID",Id("ID"),FuncDecl("foo",[],IntType(),Block([VarDecl("a", None,IntLiteral(1))]))),
+		# 	MethodDecl("ID",Id("ID"),FuncDecl("foo",[],ArrayType([IntLiteral(2)],Id("ID")),Block([VarDecl("a", None,IntLiteral(1))])))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_134(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        for index, value[2] := range arr {
-                                        // index: 0, 1, 2
-                                        return; 
-                                        }
-                                    };""","Error on line 3 col 56: [", 134))
-        
+        input = """
+    func (ID ID) foo (a int) {var a = 1;}
+    func (ID ID) foo (a int, b ID) {var a = 1;}
+    func (ID ID) foo (a, b int) {var a = 1;}
+"""
+        # # expect = Program([MethodDecl("ID",Id("ID"),FuncDecl("foo",[ParamDecl("a",IntType())],VoidType(),Block([VarDecl("a", None,IntLiteral(1))]))),
+		# 	MethodDecl("ID",Id("ID"),FuncDecl("foo",[ParamDecl("a",IntType()),ParamDecl("b",Id("ID"))],VoidType(),Block([VarDecl("a", None,IntLiteral(1))]))),
+		# 	MethodDecl("ID",Id("ID"),FuncDecl("foo",[ParamDecl("a",IntType()),ParamDecl("b",IntType())],VoidType(),Block([VarDecl("a", None,IntLiteral(1))])))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_135(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        for index, value := range arr[2] {return
-                                        }
-                                    };""","successful", 135))
-        
+        input = """
+        type INTERFACE interface {
+            foo();
+            foo() int;
+            foo() [2]ID;
+            foo(a int);
+            foo(a int, b int);
+            foo(a, b int);
+        }
+"""
+        # # expect = Program([InterfaceType("INTERFACE",[
+        #     Prototype("foo",[],VoidType()),Prototype("foo",[],IntType()),
+        #     Prototype("foo",[],ArrayType([IntLiteral(2)],Id("ID"))),
+        #     Prototype("foo",[IntType()],VoidType()),
+        #     Prototype("foo",[IntType(),IntType()],VoidType()),
+        #     Prototype("foo",[IntType(),IntType()],VoidType())])
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_136(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        for index, value := range 23 {return; 
-                                        }
-                                    };""","successful", 136))
-        
+        input = """
+    func foo () {
+        continue;
+        break;
+        return;
+        return 1;
+    }
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([Continue(),Break(),Return(None),Return(IntLiteral(1))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
+
     def test_137(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        for index, value := range 23 {
-                                            for index, value := range 23 {return; }
-                                        }
-                                    };""","successful", 137))
-        
+        input = """
+    func foo () {
+        var a int = 1;
+        var a float = 1;
+        var a boolean;
+        var a string = 1;
+        var a = 1;
+        var a ID = 1;
+        var a [ID][1] int = 1;
+        const a = 1;
+    }
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([
+        #     VarDecl("a",IntType(),IntLiteral(1)),
+        #     VarDecl("a",FloatType(),IntLiteral(1)),
+        #     VarDecl("a",BoolType(), None),
+        #     VarDecl("a",StringType(),IntLiteral(1)),
+        #     VarDecl("a", None,IntLiteral(1)),
+        #     VarDecl("a",Id("ID"),IntLiteral(1)),
+        #     VarDecl("a",ArrayType([Id("ID"),IntLiteral(1)],IntType()),IntLiteral(1)),
+        #     ConstDecl("a",None,IntLiteral(1))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_138(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        break;
-                                        continue
-                                        break; continue; break
-                                    };""","successful", 138))
-        
+        input = """
+    func foo () {
+        var a int = 1;
+        var a float = 1;
+        var a boolean;
+        var a string = 1;
+        var a = 1;
+        var a ID = 1;
+        var a [ID][1] int = 1;
+        const a = 1;
+    }
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([
+        #     VarDecl("a",IntType(),IntLiteral(1)),
+        #     VarDecl("a",FloatType(),IntLiteral(1)),
+        #     VarDecl("a",BoolType(), None),
+        #     VarDecl("a",StringType(),IntLiteral(1)),
+        #     VarDecl("a", None,IntLiteral(1)),
+        #     VarDecl("a",Id("ID"),IntLiteral(1)),
+        #     VarDecl("a",ArrayType([Id("ID"),IntLiteral(1)],IntType()),IntLiteral(1)),
+        #     ConstDecl("a",None,IntLiteral(1))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
+
     def test_139(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        return
-                                        return 2 + a[2].b()
-                                        return; return a
-                                    };""","successful", 139))
-        
+        input = """
+    func foo () {
+        a := 1;
+        a += 1;
+        a -= 1;
+        a *= 1;
+        a /= 1;
+        a %= 1;
+    }
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([
+        #     Assign(Id("a"),IntLiteral(1)),
+        #     Assign(Id("a"),BinaryOp("+", Id("a"), IntLiteral(1))),
+        #     Assign(Id("a"),BinaryOp("-", Id("a"), IntLiteral(1))),
+        #     Assign(Id("a"),BinaryOp("*", Id("a"), IntLiteral(1))),
+        #     Assign(Id("a"),BinaryOp("/", Id("a"), IntLiteral(1))),
+        #     Assign(Id("a"),BinaryOp("%", Id("a"), IntLiteral(1)))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_140(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        return return 2 + a[2].b()
-                    
-                                    };""","Error on line 3 col 47: return", 140))
-        
+        input = """
+    func foo () {
+        a[1] := 2;
+        a[2][1+1] += 3;
+        a.b -= 5;
+        b.b[a + b].b.c[2] := 4;
+    }
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([
+        #     Assign(ArrayCell(Id("a"),[IntLiteral(1)]),IntLiteral(2)),
+        #     Assign(ArrayCell(Id("a"),[IntLiteral(2),BinaryOp("+", IntLiteral(1), IntLiteral(1))]),BinaryOp("+", ArrayCell(Id("a"),[IntLiteral(2),BinaryOp("+", IntLiteral(1), IntLiteral(1))]), IntLiteral(3))),
+        #     Assign(FieldAccess(Id("a"),"b"),BinaryOp("-", FieldAccess(Id("a"),"b"), IntLiteral(5))),
+        #     Assign(ArrayCell(FieldAccess(FieldAccess(ArrayCell(FieldAccess(Id("b"),"b"),[BinaryOp("+", Id("a"), Id("b"))]),"b"),"c"),[IntLiteral(2)]),IntLiteral(4))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_141(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        break continue
-                    
-                                    };""","Error on line 3 col 46: continue", 141))
-        
+        input = """
+    func foo () {
+        a();
+        a(1, 2);
+        a(1);
+        b.a.a();
+        b.a.a(1, 2);
+        b.a.a(1);
+    }
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([
+        #     FuncCall("a",[]),
+        #     FuncCall("a",[IntLiteral(1),IntLiteral(2)]),
+        #     FuncCall("a",[IntLiteral(1)]),
+        #     MethCall(FieldAccess(Id("b"),"a"),"a",[]),
+        #     MethCall(FieldAccess(Id("b"),"a"),"a",[IntLiteral(1),IntLiteral(2)]),
+        #     MethCall(FieldAccess(Id("b"),"a"),"a",[IntLiteral(1)])]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 141))
+    
     def test_142(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        a.foo();
-                                        foo()
-                                    };""","successful", 142))
-        
+        input = """
+        func foo () {
+            if (a) {return;}
+            if (b) {return;} else {return;}
+        }
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([
+        #     If(Id("a"),Block([Return(None)]), None),
+        #     If(Id("b"),Block([Return(None)]),Block([Return(None)]))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_143(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        a.foo(2 + 3, a {a:2})
-                                        foo(2 + 3, a {a:2});
-                                    };""","successful", 143))
-        
+        input = """
+        func foo () {
+            for(1) {return;}
+        }
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([ForBasic(IntLiteral(1),Block([Return(None)]))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_144(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        (1+2).foo(2 + 3, a {a:2})
-                                    };""","Error on line 3 col 40: (", 144))
-        
+        input = """
+        func foo () {
+            for a, b := range 2 {return;}
+        }
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([ForEach(Id("a"),Id("b"),IntLiteral(2),Block([Return(None)]))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 144))
+
     def test_145(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        a[2][3].foo(2 + 3, a {a:2})
-                                    };""","successful", 145))
-        
+        input = """
+        func foo () {
+            for a, b := range 2 {return;}
+        }
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([ForEach(Id("a"),Id("b"),IntLiteral(2),Block([Return(None)]))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 145))
+
     def test_146(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        {break;}
-                                    };""","Error on line 3 col 40: {", 146))
-        
+        input = """
+        func foo () {
+            for var a = 1; a < 10; a := 1 {return;}
+            for a += 1; a < 10; a -= 1 {return;}
+        }
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([
+        #     ForStep(VarDecl("a", None,IntLiteral(1)),BinaryOp("<", Id("a"), IntLiteral(10)),Assign(Id("a"),IntLiteral(1)),Block([Return(None)])),
+        #     ForStep(Assign(Id("a"),BinaryOp("+", Id("a"), IntLiteral(1))),BinaryOp("<", Id("a"), IntLiteral(10)),Assign(Id("a"),BinaryOp("-", Id("a"), IntLiteral(1))),Block([Return(None)]))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
+
     def test_147(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                        break;
-                                    func Add() {
-                                    };""","Error on line 2 col 40: break", 147))
-        
+        input = """
+        func foo () {
+            if (1){return;} else if (2){return;} else if (3){return;} else {return;}
+            if (1){return;} else if (2){return;} else if (3){return;}
+        }
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([
+        #     If(IntLiteral(1), Block([Return(None)]), 
+        #        If(IntLiteral(2), Block([Return(None)]), 
+        #           If(IntLiteral(3), Block([Return(None)]), Block([Return(None)])))),
+        #     If(IntLiteral(1), Block([Return(None)]), 
+        #        If(IntLiteral(2), Block([Return(None)]), 
+        #           If(IntLiteral(3), Block([Return(None)]), None)))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 147))
+
     def test_148(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        return (2 + 3).b
-                                        return -1.c
-                                    };""","Error on line 4 col 50: c", 148))
-        
+        input = """
+        func foo () {
+            return a[2][3][4];
+        }
+"""
+        # # expect = Program([FuncDecl("foo",[],VoidType(),Block([Return(ArrayCell(Id("a"),[IntLiteral(2),IntLiteral(3),IntLiteral(4)]))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_149(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        return (2 + 3)[b]
-                                        return -1.c[c]
-                                    };""","Error on line 4 col 50: c", 149))
-        
+        input = """
+        func foo () {
+            a.b[2][3][4] := 1;
+        }
+"""
+        # # # expect = Program([FuncDecl("foo",[],VoidType(),Block([
+        #     Assign(ArrayCell(FieldAccess(Id("a"),"b"),[IntLiteral(2),IntLiteral(3),IntLiteral(4)]),IntLiteral(1))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))
+
     def test_150(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        if (1) {return struct;}
-                                        else if(2) {return string;}
-                                        else if(3) {reutrn int;}
-                                    };""","Error on line 3 col 55: struct", 150))
-        
-    def test_151(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        if (1) {return;}else if(2) {return string;}else if(3) {reutrn int;}
-                                    };""","Error on line 3 col 75: string", 151))
-        
-    def test_152(self):
-        """Statement"""
-        self.assertTrue(TestParser.test("""
-                                    func Add() {
-                                        if (1) {return;}else if(2) {return string;}else if(3) {reutrn int;}else  {return struct;}
-                                    };""","Error on line 3 col 75: string", 152))
-        
-    def test_153(self):
-        """array_literal"""
-        self.assertTrue(TestParser.test("""const a = [1]int{1+1}                    
-""","Error on line 1 col 18: +", 153))
-        
-    def test_154(self):
-        """array_literal"""
-        self.assertTrue(TestParser.test("""const a = [1]int{{1, 0x1}, ID{}, {{ID{}}}}                    
-""","successful", 154))
-        
-    def test_155(self):
-        """array_literal"""
-        self.assertTrue(TestParser.test("""const a = [1]int{}                    
-""","Error on line 1 col 17: }", 155))
-        
-    def test_156(self):
-        """array_literal"""
-        self.assertTrue(TestParser.test("""const a = [1]int{[1]int{1}}                    
-""","Error on line 1 col 17: [", 156))
-        
-    def test_157(self):
-        """array_literal"""
-        self.assertTrue(TestParser.test("""const a = [1]int{{1, 0x1}, ID{}, 1.2, "s", true, false, nil} + nil                    
-""","successful", 157))
-        
-    def test_158(self):
-        self.assertTrue(TestParser.test("""
-        func Add(x, y int, b float) {return ;}           
-""","successful", 158))
-        
-    def test_159(self):
-        self.assertTrue(TestParser.test("""
-        func (c c) Add(x, y int, b float) {return ;}           
-""","successful", 159))
-        
-    def test_160(self):
-        self.assertTrue(TestParser.test("""
-        type Person struct {
-            func (p Person) Greet() string {
-                return "Hello, " + p.name
-            }
-            c c
-            func (c c) Add(x, y int, b float) {return ;}  
-            value int;                            
-        }      
-""","successful", 160))
-        
-    def test_161(self):
-        self.assertTrue(TestParser.test("""
-        type Person struct {
-            c int  c int;                                                    
-        }      
-""","Error on line 3 col 19: c", 161))
-        
-    def test_162(self):
-        self.assertTrue(TestParser.test("""
-            func (p Person) Greet() string {
-                for i := 0
-                    i < 10
-                    i += 1 {
-                    return
-                }
-                for i := 0
-                    i < 10
-                    i += 1 
-                {
-                    return
-                }
-            };  
-""","Error on line 10 col 27: ;", 162))
+        input = """
+        func foo () {
+            a[1*2][1+2] := a[1*2][1+2];
+            a[1+2] := a[1+2];
+        }
+"""
+        # # # expect = Program([FuncDecl("foo",[],VoidType(),Block([
+        #     Assign(ArrayCell(Id("a"),[BinaryOp("*", IntLiteral(1), IntLiteral(2)),BinaryOp("+", IntLiteral(1), IntLiteral(2))]),ArrayCell(Id("a"),[BinaryOp("*", IntLiteral(1), IntLiteral(2)),BinaryOp("+", IntLiteral(1), IntLiteral(2))])),
+        #     Assign(ArrayCell(Id("a"),[BinaryOp("+", IntLiteral(1), IntLiteral(2))]),ArrayCell(Id("a"),[BinaryOp("+", IntLiteral(1), IntLiteral(2))]))]))
+		# ])
+        self.assertTrue(TestParser.test(input, "successful", 1))

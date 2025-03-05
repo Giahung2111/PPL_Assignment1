@@ -1,6 +1,1 @@
-
-            type VoTien struct {
-                VoTien string ;
-                VoTien [1][3]VoTien ;                     
-            }                                                                     
-        
+const VoTien = [1][2] STRUCT {{1, {3}}, {2}}; 

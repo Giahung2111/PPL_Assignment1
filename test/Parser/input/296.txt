@@ -8,6 +8,6 @@ type Employee struct {
         }
         func main() {
             var emp Employee = Employee{name: "Alice", salary: 50000.0};
-            emp = increaseSalary(emp, 10);
+            emp := increaseSalary(emp, 10);
             putFloatLn(emp.salary);
         }

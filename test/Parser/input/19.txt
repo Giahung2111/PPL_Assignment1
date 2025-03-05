@@ -1,12 +1,1 @@
-    
-            func VoTien() {
-                if (x > 10) {return; } 
-                if (x > 10) {
-                  return; 
-                } else if (x == 10) {
-                    var z str;
-                } else {
-                    var z ID;
-                }
-            }
-        
+const VoTien = 1 * 2 / 3 % 4; 

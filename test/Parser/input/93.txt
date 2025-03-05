@@ -1,2 +1,7 @@
 
-            func (c c) Add(x, c int) {return ;}
+            func foo(){
+                foo();
+                foo(foo(), 2);
+                a.foo();
+                a[2].c.foo(foo(), 2);
+            } 

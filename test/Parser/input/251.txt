@@ -1,5 +1,5 @@
 func main() {
             var x int;
-            x = 15;
+            x := 15;
             putIntLn(x);
         }

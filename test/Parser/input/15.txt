@@ -1,3 +1,1 @@
-
-            type VoTien struct {}                                                                       
-        
+const VoTien = 1 || 2 || 3; 

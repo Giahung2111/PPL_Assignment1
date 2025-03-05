@@ -2,7 +2,7 @@ func main() {
             var n int = 5;
             var fact int = 1;
             for i := 1; i <= n; i += 1 {
-                fact = fact * i;
+                fact := fact * i;
             }
             putIntLn(fact);
         }

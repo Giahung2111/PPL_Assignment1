@@ -2,7 +2,7 @@ type Circle struct {
             radius float;
         }
         func (c Circle) SetRadius(r float) {
-            c.radius = r;
+            c.radius := r;
         }
         func (c Circle) Area() float {
             return 3.14 * c.radius * c.radius;
